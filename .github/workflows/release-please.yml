@@ -9,7 +9,6 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
-  id-token: write
 
 concurrency:
   group: release-please-${{ github.ref }}
@@ -21,46 +20,9 @@ jobs:
     steps:
       - name: Release Please
         uses: googleapis/release-please-action@v4
-        id: release
         with:
           # Use a PAT (RELEASE_PLEASE_TOKEN) if you want CI to run on release PRs.
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
           include-component-in-tag: true
-
-      - name: Checkout
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        uses: actions/checkout@v6
-
-      - name: Setup pnpm
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        uses: pnpm/action-setup@v4
-        with:
-          package_json_file: ./package.json
-
-      - name: Setup Node.js
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org
-          cache: pnpm
-
-      - name: Install dependencies
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm install --frozen-lockfile
-
-      - name: Test
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm --filter wavedance test
-
-      - name: Build
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm --filter wavedance build
-
-      - name: Publish to npm
-        if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm --filter wavedance publish --no-git-checks --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

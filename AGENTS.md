@@ -129,7 +129,8 @@ When adding config fields, update **all four**: `types.ts` (if library-level), `
 ## CI and releases
 
 - **CI** (`.github/workflows/ci.yml`): Biome format + lint, typecheck, test, build on Ubuntu with Node 22.
-- **Release Please** publishes only `wavedance` to npm. Desktop and landing are private, not released via this pipeline.
+- **Release Please** (`.github/workflows/release-please.yml`) opens release PRs and creates GitHub releases on merge.
+- **Publish npm** (`.github/workflows/publish-npm.yml`) publishes `wavedance` to npm when a `wavedance-v*` GitHub release is published. Re-run that workflow to republish an existing tag.
 - Full `tauri build` (DMG) requires **macOS** locally; CI does not produce desktop bundles today.
 
 ## Sensitive / do-not-casually-change areas
