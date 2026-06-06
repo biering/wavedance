@@ -27,11 +27,6 @@ Releases are automated with [release-please](https://github.com/googleapis/relea
 3. Merge the release PR to tag the release (`wavedance-v*`) and create a GitHub release.
 4. The [Publish npm](.github/workflows/publish-npm.yml) workflow runs on `release: published` to test, build, and publish to npm.
 
-Required GitHub secrets:
-
-- `NPM_TOKEN` — npm automation token for `wavedance`
-- `RELEASE_PLEASE_TOKEN` (optional) — PAT so CI runs on release PRs; falls back to `GITHUB_TOKEN`
-
 ## License
 
 MIT
