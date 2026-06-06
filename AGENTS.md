@@ -8,7 +8,7 @@ Wavedance is a high-performance animated dot-grid canvas library. This repo cont
 
 | Path | Package | Purpose |
 |------|---------|---------|
-| `packages/wavedance` | `@maelstrom/wavedance` | Framework-agnostic canvas library (published to npm) |
+| `packages/wavedance` | `@maelstromlab/wavedance` | Framework-agnostic canvas library (published to npm) |
 | `apps/landing` | `landing` | Astro + React marketing/demo site |
 | `apps/desktop` | `desktop` | macOS Tauri 2 wallpaper app with Polar licensing |
 
@@ -20,15 +20,15 @@ The library is the source of truth for animation behavior. The desktop app wraps
 - **Node:** ≥ 22 (root `engines`). CI tests Node 20 and 22.
 - **Lint/format:** Biome — not ESLint/Prettier.
 - **TypeScript:** ESM (`"type": "module"`) everywhere in JS/TS packages.
-- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) — release-please only bumps `@maelstrom/wavedance` today.
+- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) — release-please only bumps `@maelstromlab/wavedance` today.
 
 ## Commands
 
 ```bash
 pnpm install                  # install all workspaces
 pnpm ci                       # format check + lint + typecheck + test + build (all packages)
-pnpm --filter @maelstrom/wavedance test   # library unit tests (Vitest)
-pnpm --filter @maelstrom/wavedance dev     # library watch build
+pnpm --filter @maelstromlab/wavedance test   # library unit tests (Vitest)
+pnpm --filter @maelstromlab/wavedance dev     # library watch build
 pnpm --filter desktop dev                  # Tauri dev (macOS)
 pnpm --filter desktop vite:build           # frontend-only build (no Rust bundle)
 pnpm --filter landing dev                  # Astro dev server
@@ -51,7 +51,7 @@ Follow Biome settings in `biome.json`:
 General principles:
 
 - **Minimize scope.** Match surrounding code; don't refactor unrelated files.
-- **Keep `@maelstrom/wavedance` framework-agnostic.** No React, Tauri, or DOM assumptions beyond canvas/container APIs.
+- **Keep `@maelstromlab/wavedance` framework-agnostic.** No React, Tauri, or DOM assumptions beyond canvas/container APIs.
 - **Prefer editing existing abstractions** over adding one-off helpers.
 - **Comments** only for non-obvious logic — the code should read clearly on its own.
 - **Tests** belong in `packages/wavedance` (Vitest). Add tests for library behavior changes; don't add trivial tests.
@@ -82,7 +82,7 @@ apps/desktop/src-tauri/src/
   state.rs              # licensed flag + tray menu handle refs
 ```
 
-## `@maelstrom/wavedance` (library)
+## `@maelstromlab/wavedance` (library)
 
 - **Public API:** `createWavedance(container, config?)` → `{ update, destroy, getConfig }`.
 - **Build:** tsup → `dist/` (ESM + CJS + types). Do not import from `src/` outside this package.
@@ -124,12 +124,12 @@ When adding config fields, update **all four**: `types.ts` (if library-level), `
 ## Landing app
 
 - Astro 6 + React 19 + Tailwind 4 — same UI component patterns as desktop (`components/ui/`).
-- Imports `@maelstrom/wavedance` from the workspace. Run `pnpm build` on the library before landing builds if types/dist are stale.
+- Imports `@maelstromlab/wavedance` from the workspace. Run `pnpm build` on the library before landing builds if types/dist are stale.
 
 ## CI and releases
 
 - **CI** (`.github/workflows/ci.yml`): Biome format + lint, typecheck, test, build on Ubuntu for Node 20/22.
-- **Release Please** publishes only `@maelstrom/wavedance` to npm. Desktop and landing are private, not released via this pipeline.
+- **Release Please** publishes only `@maelstromlab/wavedance` to npm. Desktop and landing are private, not released via this pipeline.
 - Full `tauri build` (DMG) requires **macOS** locally; CI does not produce desktop bundles today.
 
 ## Sensitive / do-not-casually-change areas

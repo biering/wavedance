@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import type { AnimationType, WavedanceConfig } from "@maelstrom/wavedance"
+import type { AnimationType, WavedanceConfig } from "@maelstromlab/wavedance"
 import { useState } from "react"
 import { defaultControlsState } from "../defaults"
 
@@ -186,7 +186,7 @@ export function Controls({ onChange }: ControlsProps) {
         )}
 
         <a
-          href="https://www.npmjs.com/package/@maelstrom/wavedance"
+          href="https://www.npmjs.com/package/@maelstromlab/wavedance"
           target="_blank"
           rel="noreferrer"
           className="inline-block text-sm text-primary hover:underline"

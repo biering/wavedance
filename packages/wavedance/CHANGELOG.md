@@ -4,4 +4,4 @@
 
 ### Features
 
-* Initial release of `@maelstrom/wavedance`
+* Initial release of `@maelstromlab/wavedance`

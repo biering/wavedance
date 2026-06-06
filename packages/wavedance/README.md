@@ -1,17 +1,17 @@
-# @maelstrom/wavedance
+# @maelstromlab/wavedance
 
 High-performance animated dot-grid canvas library.
 
 ## Install
 
 ```bash
-npm install @maelstrom/wavedance
+npm install @maelstromlab/wavedance
 ```
 
 ## Usage
 
 ```ts
-import { createWavedance } from "@maelstrom/wavedance";
+import { createWavedance } from "@maelstromlab/wavedance";
 
 const container = document.getElementById("background")!;
 const wavedance = createWavedance(container, {

@@ -1,4 +1,4 @@
-import type { AnimationType, WavedanceConfig } from "@maelstrom/wavedance"
+import type { AnimationType, WavedanceConfig } from "@maelstromlab/wavedance"
 
 export const defaultControlsState = {
   dotSize: 1,
