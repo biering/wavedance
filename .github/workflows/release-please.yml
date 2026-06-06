@@ -53,14 +53,14 @@ jobs:
 
       - name: Test
         if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm --filter @maelstromlab/wavedance test
+        run: pnpm --filter wavedance test
 
       - name: Build
         if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm --filter @maelstromlab/wavedance build
+        run: pnpm --filter wavedance build
 
       - name: Publish to npm
         if: ${{ steps.release.outputs['packages/wavedance--release_created'] == 'true' }}
-        run: pnpm --filter @maelstromlab/wavedance publish --no-git-checks --access public --provenance
+        run: pnpm --filter wavedance publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

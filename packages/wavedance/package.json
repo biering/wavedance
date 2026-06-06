@@ -1,5 +1,5 @@
 {
-  "name": "@maelstromlab/wavedance",
+  "name": "wavedance",
   "version": "0.1.0",
   "description": "High-performance animated dot-grid canvas library",
   "type": "module",

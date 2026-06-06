@@ -5,7 +5,7 @@
     "packages/wavedance": {
       "component": "wavedance",
       "release-type": "node",
-      "package-name": "@maelstromlab/wavedance"
+      "package-name": "wavedance"
     }
   }
 }

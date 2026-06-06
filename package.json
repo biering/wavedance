@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm --filter @maelstromlab/wavedance dev",
-    "typecheck": "pnpm --filter @maelstromlab/wavedance build && pnpm -r typecheck",
+    "dev": "pnpm --filter wavedance dev",
+    "typecheck": "pnpm --filter wavedance build && pnpm -r typecheck",
     "test": "pnpm -r test",
     "lint": "biome lint .",
     "format": "biome format .",

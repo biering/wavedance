@@ -1,4 +1,4 @@
-import { type WavedanceConfig, createWavedance } from "@maelstromlab/wavedance"
+import { type WavedanceConfig, createWavedance } from "wavedance"
 import { useEffect, useRef } from "react"
 import { defaultWavedanceConfig } from "../defaults"
 import { Controls } from "./Controls"
