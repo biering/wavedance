@@ -1,0 +1,38 @@
+{
+  "name": "wavedance-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter @maelstrom/wavedance dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "biome lint .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "ci": "biome ci . && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "packageExtensions": {
+      "react-remove-scroll@*": {
+        "dependencies": {
+          "tslib": "^2.8.1"
+        }
+      },
+      "use-sidecar@*": {
+        "dependencies": {
+          "tslib": "^2.8.1"
+        }
+      }
+    }
+  }
+}

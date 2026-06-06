@@ -1,0 +1,113 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { createWavedance } from "./wavedance"
+
+class MockResizeObserver {
+  static instances: MockResizeObserver[] = []
+  observe = vi.fn()
+  disconnect = vi.fn()
+  unobserve = vi.fn()
+
+  constructor(_callback: ResizeObserverCallback) {
+    MockResizeObserver.instances.push(this)
+  }
+}
+
+class MockIntersectionObserver {
+  static instances: MockIntersectionObserver[] = []
+  observe = vi.fn()
+  disconnect = vi.fn()
+  unobserve = vi.fn()
+
+  constructor(_callback: IntersectionObserverCallback) {
+    MockIntersectionObserver.instances.push(this)
+  }
+}
+
+function mockCanvasContext(): CanvasRenderingContext2D {
+  return {
+    fillStyle: "",
+    globalAlpha: 1,
+    fillRect: vi.fn(),
+  } as unknown as CanvasRenderingContext2D
+}
+
+describe("createWavedance", () => {
+  let container: HTMLDivElement
+
+  beforeEach(() => {
+    MockResizeObserver.instances = []
+    MockIntersectionObserver.instances = []
+
+    vi.stubGlobal("ResizeObserver", MockResizeObserver)
+    vi.stubGlobal("IntersectionObserver", MockIntersectionObserver)
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }))
+
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(mockCanvasContext())
+
+    container = document.createElement("div")
+    Object.defineProperty(container, "clientWidth", { value: 400, configurable: true })
+    Object.defineProperty(container, "clientHeight", { value: 300, configurable: true })
+    container.getBoundingClientRect = () =>
+      ({
+        width: 400,
+        height: 300,
+        top: 0,
+        left: 0,
+        right: 400,
+        bottom: 300,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect
+    document.body.appendChild(container)
+  })
+
+  afterEach(() => {
+    document.body.innerHTML = ""
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
+
+  it("mounts a canvas inside the container", () => {
+    const instance = createWavedance(container, { animation: "wave" })
+    const canvas = container.querySelector("canvas")
+    expect(canvas).not.toBeNull()
+    expect(canvas?.style.width).toBe("400px")
+    expect(canvas?.style.height).toBe("300px")
+    instance.destroy()
+  })
+
+  it("updates configuration at runtime", () => {
+    const instance = createWavedance(container, { animation: "none", dotSize: 2 })
+    instance.update({ animation: "wave", dotSize: 4 })
+    const config = instance.getConfig()
+    expect(config.animation).toBe("wave")
+    expect(config.dotSize).toBe(4)
+    instance.destroy()
+  })
+
+  it("destroy removes canvas and disconnects observers", () => {
+    const instance = createWavedance(container, { animation: "wave" })
+    expect(container.querySelector("canvas")).not.toBeNull()
+
+    instance.destroy()
+
+    expect(container.querySelector("canvas")).toBeNull()
+    expect(MockResizeObserver.instances[0]?.disconnect).toHaveBeenCalled()
+    expect(MockIntersectionObserver.instances[0]?.disconnect).toHaveBeenCalled()
+  })
+
+  it("throws when container is missing", () => {
+    expect(() => createWavedance(null as unknown as HTMLElement)).toThrow(
+      /requires a container element/,
+    )
+  })
+})
