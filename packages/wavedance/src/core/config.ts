@@ -20,8 +20,8 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
   return {
     dotSize: config.dotSize ?? DEFAULT_DOT_SIZE,
     gap,
-    foreground: normalizeHexColor(config.foreground ?? "#aaaaaa"),
-    background: normalizeHexColor(config.background ?? "#000000"),
+    foreground: normalizeHexColor(config.foreground ?? "#7c7c7c"),
+    background: normalizeHexColor(config.background ?? "#161616"),
     animation: config.animation ?? "wave",
     wave: {
       scale: config.wave?.scale ?? 0.004,

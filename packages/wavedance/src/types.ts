@@ -34,9 +34,9 @@ export interface WavedanceConfig {
   dotSize?: number
   /** Gap between dots in CSS pixels (symmetric or per-axis). Default: 12 */
   gap?: number | GapConfig
-  /** Dot color as hex string. Default: "#ffffff" */
+  /** Dot color as hex string. Default: "#7c7c7c" */
   foreground?: string
-  /** Canvas background color as hex string. Default: "#0f0f0f" */
+  /** Canvas background color as hex string. Default: "#161616" */
   background?: string
   /** Animation mode. Default: "wave" */
   animation?: AnimationType

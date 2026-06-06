@@ -17,8 +17,8 @@ const container = document.getElementById("background")!;
 const wavedance = createWavedance(container, {
   dotSize: 1,
   gap: 10,
-  foreground: "#aaaaaa",
-  background: "#000000",
+  foreground: "#7c7c7c",
+  background: "#161616",
   animation: "wave",
   wave: {
     scale: 0.004,
@@ -41,8 +41,8 @@ wavedance.destroy();
 |--------|------|---------|-------------|
 | `dotSize` | `number` | `1` | Dot diameter in CSS pixels |
 | `gap` | `number \| { x, y }` | `10` | Gap between dots |
-| `foreground` | `string` | `#aaaaaa` | Dot color (hex) |
-| `background` | `string` | `#000000` | Canvas background (hex) |
+| `foreground` | `string` | `#7c7c7c` | Dot color (hex) |
+| `background` | `string` | `#161616` | Canvas background (hex) |
 | `animation` | `"none" \| "random" \| "wave"` | `"wave"` | Animation mode |
 | `devicePixelRatio` | `number` | `window.devicePixelRatio` | DPR override |
 | `maxDots` | `number` | `100000` | Safety cap on dot count |

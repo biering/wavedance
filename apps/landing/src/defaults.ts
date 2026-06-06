@@ -3,8 +3,8 @@ import type { AnimationType, WavedanceConfig } from "@maelstrom/wavedance"
 export const defaultControlsState = {
   dotSize: 1,
   gap: 10,
-  foreground: "#aaaaaa",
-  background: "#000000",
+  foreground: "#7c7c7c",
+  background: "#161616",
   animation: "wave" as AnimationType,
   waveScale: 0.004,
   waveSpeed: 0.0003,
