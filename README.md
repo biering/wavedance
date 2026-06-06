@@ -2,10 +2,12 @@
 
 A high-performance animated dot-grid canvas library.
 
+**Live demo:** [biering.github.io/wavedance](https://biering.github.io/wavedance/)
+
 ## Packages
 
 - [`wavedance`](./packages/wavedance) — framework-agnostic canvas library
-- [`landing`](./apps/landing) — Astro + React demo site
+- [`landing`](./apps/landing) — Astro + React demo site ([live example](https://biering.github.io/wavedance/))
 
 ## Development
 

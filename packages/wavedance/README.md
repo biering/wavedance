@@ -2,6 +2,8 @@
 
 High-performance animated dot-grid canvas library.
 
+**Live demo:** [biering.github.io/wavedance](https://biering.github.io/wavedance/)
+
 ## Install
 
 ```bash
