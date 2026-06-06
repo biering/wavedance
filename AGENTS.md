@@ -17,7 +17,7 @@ The library is the source of truth for animation behavior. The desktop app wraps
 ## Toolchain
 
 - **Package manager:** pnpm 10 (workspace). Always use `pnpm`, not npm/yarn.
-- **Node:** ≥ 22 (root `engines`). CI tests Node 20 and 22.
+- **Node:** ≥ 22 (root `engines`; Astro 6 requires ≥ 22.12.0). CI runs Node 22.
 - **Lint/format:** Biome — not ESLint/Prettier.
 - **TypeScript:** ESM (`"type": "module"`) everywhere in JS/TS packages.
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) — release-please only bumps `@maelstromlab/wavedance` today.
@@ -128,7 +128,7 @@ When adding config fields, update **all four**: `types.ts` (if library-level), `
 
 ## CI and releases
 
-- **CI** (`.github/workflows/ci.yml`): Biome format + lint, typecheck, test, build on Ubuntu for Node 20/22.
+- **CI** (`.github/workflows/ci.yml`): Biome format + lint, typecheck, test, build on Ubuntu with Node 22.
 - **Release Please** publishes only `@maelstromlab/wavedance` to npm. Desktop and landing are private, not released via this pipeline.
 - Full `tauri build` (DMG) requires **macOS** locally; CI does not produce desktop bundles today.
 
