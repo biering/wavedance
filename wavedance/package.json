@@ -1,6 +1,6 @@
 {
   "name": "wavedance",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "High-performance animated dot-grid canvas library",
   "type": "module",
   "sideEffects": false,
@@ -19,7 +19,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -30,7 +32,14 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": ["canvas", "animation", "dots", "grid", "background", "perlin-noise"],
+  "keywords": [
+    "canvas",
+    "animation",
+    "dots",
+    "grid",
+    "background",
+    "perlin-noise"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
