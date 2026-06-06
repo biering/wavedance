@@ -34,8 +34,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maelstrom/wavedance.git",
-    "directory": "packages/wavedance"
+    "url": "https://github.com/biering/wavedance.git",
+    "directory": "wavedance"
   },
   "engines": {
     "node": ">=18"

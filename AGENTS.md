@@ -8,9 +8,8 @@ Wavedance is a high-performance animated dot-grid canvas library. This repo cont
 
 | Path | Package | Purpose |
 |------|---------|---------|
-| `packages/wavedance` | `wavedance` | Framework-agnostic canvas library (published to npm) |
+| `wavedance` | `wavedance` | Framework-agnostic canvas library (published to npm) |
 | `apps/landing` | `landing` | Astro + React marketing/demo site |
-| `apps/desktop` | `desktop` | macOS Tauri 2 wallpaper app with Polar licensing |
 
 The library is the source of truth for animation behavior. The desktop app wraps it as a live wallpaper; the landing site demos it on the web.
 
@@ -54,12 +53,12 @@ General principles:
 - **Keep `wavedance` framework-agnostic.** No React, Tauri, or DOM assumptions beyond canvas/container APIs.
 - **Prefer editing existing abstractions** over adding one-off helpers.
 - **Comments** only for non-obvious logic — the code should read clearly on its own.
-- **Tests** belong in `packages/wavedance` (Vitest). Add tests for library behavior changes; don't add trivial tests.
+- **Tests** belong in `wavedance` (Vitest). Add tests for library behavior changes; don't add trivial tests.
 
 ## Repository layout
 
 ```
-packages/wavedance/src/
+wavedance/src/
   wavedance.ts          # public entry: createWavedance()
   types.ts              # WavedanceConfig, WavedanceInstance, etc.
   core/                 # config resolution, grid, noise, field, color
@@ -139,7 +138,7 @@ When adding config fields, update **all four**: `types.ts` (if library-level), `
 |------|-----|
 | `license.rs`, `polar.json` | Revenue, activation, keychain |
 | `wallpaper.rs` native window config | Breaks wallpaper layering on macOS |
-| `packages/wavedance/src/render/` | Performance-critical render loop |
+| `wavedance/src/render/` | Performance-critical render loop |
 | Published `exports` / bundle config | npm consumers depend on these paths |
 
 ## Subagents

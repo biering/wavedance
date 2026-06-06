@@ -1,5 +1,5 @@
 packages:
-  - "packages/*"
+  - "wavedance"
   - "apps/*"
 packageExtensions:
   react-remove-scroll@*:
