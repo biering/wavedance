@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/biering/wavedance/compare/wavedance-v0.2.0...wavedance-v0.2.1) (2026-06-06)
+
+
+### Bug Fixes
+
+* moved the package dir ([20967d1](https://github.com/biering/wavedance/commit/20967d1ee9d108603473a9f67a2a2b383552b07e))
+
 ## [0.2.0](https://github.com/biering/wavedance/compare/wavedance-v0.1.0...wavedance-v0.2.0) (2026-06-06)
 
 
