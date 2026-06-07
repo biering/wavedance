@@ -9,6 +9,7 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  id-token: write
 
 concurrency:
   group: release-please-${{ github.ref }}
@@ -17,8 +18,12 @@ concurrency:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs['wavedance--release_created'] }}
+      tag_name: ${{ steps.release.outputs['wavedance--tag_name'] }}
     steps:
       - name: Release Please
+        id: release
         uses: googleapis/release-please-action@v4
         with:
           # Use a PAT (RELEASE_PLEASE_TOKEN) if you want CI to run on release PRs.
@@ -26,3 +31,76 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
           include-component-in-tag: true
+
+      - name: Checkout release PR branch
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: ./package.json
+
+      - name: Setup Node.js
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Format release PR with Biome
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        run: pnpm format:fix
+
+      - name: Commit formatting
+        if: ${{ steps.release.outputs.prs_created == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "style: apply biome format"
+          git push
+
+  publish:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: ./package.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test
+        run: pnpm --filter wavedance test
+
+      - name: Build
+        run: pnpm --filter wavedance build
+
+      - name: Publish to npm
+        run: pnpm --filter wavedance publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -24,8 +24,7 @@ Releases are automated with [release-please](https://github.com/googleapis/relea
 
 1. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `feat!:` for breaking changes).
 2. Release Please opens a release PR that bumps `wavedance` and updates `CHANGELOG.md`.
-3. Merge the release PR to tag the release (`wavedance-v*`) and create a GitHub release.
-4. The [Publish npm](.github/workflows/publish-npm.yml) workflow runs on `release: published` to test, build, and publish to npm.
+3. Merge the release PR to tag the release (`wavedance-v*`), create a GitHub release, and publish to npm.
 
 ## License
 
