@@ -28,6 +28,7 @@ function mockCanvasContext(): CanvasRenderingContext2D {
     fillStyle: "",
     globalAlpha: 1,
     fillRect: vi.fn(),
+    clearRect: vi.fn(),
   } as unknown as CanvasRenderingContext2D
 }
 
@@ -87,10 +88,17 @@ describe("createWavedance", () => {
 
   it("updates configuration at runtime", () => {
     const instance = createWavedance(container, { animation: "none", dotSize: 2 })
-    instance.update({ animation: "wave", dotSize: 4 })
+    instance.update({
+      animation: "wave",
+      dotSize: 4,
+      foregroundOpacity: 0.5,
+      backgroundOpacity: 0.8,
+    })
     const config = instance.getConfig()
     expect(config.animation).toBe("wave")
     expect(config.dotSize).toBe(4)
+    expect(config.foregroundOpacity).toBe(0.5)
+    expect(config.backgroundOpacity).toBe(0.8)
     instance.destroy()
   })
 

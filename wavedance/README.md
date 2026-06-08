@@ -44,7 +44,9 @@ wavedance.destroy();
 | `dotSize` | `number` | `1` | Dot diameter in CSS pixels |
 | `gap` | `number \| { x, y }` | `10` | Gap between dots |
 | `foreground` | `string` | `#7c7c7c` | Dot color (hex) |
+| `foregroundOpacity` | `number` | `1` | Dot opacity multiplier (0–1) |
 | `background` | `string` | `#161616` | Canvas background (hex) |
+| `backgroundOpacity` | `number` | `1` | Background opacity (0–1) |
 | `animation` | `"none" \| "random" \| "wave"` | `"wave"` | Animation mode |
 | `devicePixelRatio` | `number` | `window.devicePixelRatio` | DPR override |
 | `maxDots` | `number` | `100000` | Safety cap on dot count |

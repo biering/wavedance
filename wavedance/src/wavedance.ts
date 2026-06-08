@@ -78,7 +78,9 @@ export function createWavedance(
     renderer.draw(grid, intensities, {
       dotSize: resolved.dotSize,
       foreground: resolved.foreground,
+      foregroundOpacity: resolved.foregroundOpacity,
       background: resolved.background,
+      backgroundOpacity: resolved.backgroundOpacity,
       dpr: resolved.devicePixelRatio,
     })
   }

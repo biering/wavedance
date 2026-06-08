@@ -36,8 +36,12 @@ export interface WavedanceConfig {
   gap?: number | GapConfig
   /** Dot color as hex string. Default: "#7c7c7c" */
   foreground?: string
+  /** Dot opacity multiplier (0–1). Default: 1 */
+  foregroundOpacity?: number
   /** Canvas background color as hex string. Default: "#161616" */
   background?: string
+  /** Background opacity (0–1). Default: 1 */
+  backgroundOpacity?: number
   /** Animation mode. Default: "wave" */
   animation?: AnimationType
   /** Wave animation options */
@@ -56,7 +60,9 @@ export interface ResolvedWavedanceConfig {
   dotSize: number
   gap: GapConfig
   foreground: string
+  foregroundOpacity: number
   background: string
+  backgroundOpacity: number
   animation: AnimationType
   wave: Required<WaveAnimationOptions>
   random: Required<RandomAnimationOptions>
@@ -88,6 +94,8 @@ export interface GridLayout {
 export interface DrawOptions {
   dotSize: number
   foreground: string
+  foregroundOpacity: number
   background: string
+  backgroundOpacity: number
   dpr: number
 }

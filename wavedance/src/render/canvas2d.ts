@@ -13,7 +13,9 @@ export class Canvas2DRenderer implements Renderer {
   )
   private readonly bucketCounts = new Int32Array(BUCKET_COUNT)
   private foregroundRgb = { r: 255, g: 255, b: 255 }
+  private backgroundRgb = { r: 0, g: 0, b: 0 }
   private lastForeground = ""
+  private lastBackgroundFill = ""
 
   init(container: HTMLElement): void {
     this.canvas = document.createElement("canvas")
@@ -22,7 +24,7 @@ export class Canvas2DRenderer implements Renderer {
     this.canvas.style.height = "100%"
     this.canvas.style.pointerEvents = "none"
 
-    const ctx = this.canvas.getContext("2d", { alpha: false })
+    const ctx = this.canvas.getContext("2d", { alpha: true })
     if (!ctx) {
       throw new Error("Failed to get 2D canvas context")
     }
@@ -48,7 +50,7 @@ export class Canvas2DRenderer implements Renderer {
     const canvas = this.canvas
     if (!ctx || !canvas) return
 
-    const { dotSize, foreground, background, dpr } = options
+    const { dotSize, foreground, foregroundOpacity, background, backgroundOpacity, dpr } = options
     const count = grid.count
     const dotPixelSize = Math.max(1, dotSize * dpr)
 
@@ -57,20 +59,30 @@ export class Canvas2DRenderer implements Renderer {
       this.lastForeground = foreground
     }
 
-    ctx.fillStyle = background
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    const backgroundFillKey = `${background}:${backgroundOpacity}`
+    if (backgroundFillKey !== this.lastBackgroundFill) {
+      this.backgroundRgb = parseHexColor(background)
+      this.lastBackgroundFill = backgroundFillKey
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    if (backgroundOpacity > 0) {
+      const { r, g, b } = this.backgroundRgb
+      ctx.fillStyle = `rgba(${r},${g},${b},${backgroundOpacity})`
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
 
     this.bucketDots(count, intensities)
 
     const { r, g, b } = this.foregroundRgb
-    const rgb = `rgb(${r},${g},${b})`
-    ctx.fillStyle = rgb
+    ctx.fillStyle = `rgb(${r},${g},${b})`
 
     for (let bucket = 0; bucket < BUCKET_COUNT; bucket++) {
       const bucketSize = this.bucketCounts[bucket]
       if (bucketSize === 0) continue
 
-      const alpha = (bucket + 0.5) / BUCKET_COUNT
+      const alpha = ((bucket + 0.5) / BUCKET_COUNT) * foregroundOpacity
       if (alpha < 0.02) continue
 
       ctx.globalAlpha = alpha

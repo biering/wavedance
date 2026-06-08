@@ -60,7 +60,9 @@ export function Controls({ onChange }: ControlsProps) {
       dotSize: next.dotSize,
       gap: next.gap,
       foreground: next.foreground,
+      foregroundOpacity: next.foregroundOpacity,
       background: next.background,
+      backgroundOpacity: next.backgroundOpacity,
       animation: next.animation,
       wave: {
         scale: next.waveScale,
@@ -110,10 +112,30 @@ export function Controls({ onChange }: ControlsProps) {
           <ColorPicker value={state.foreground} onChange={(foreground) => update({ foreground })} />
         </div>
 
+        <SliderField
+          label="Foreground opacity"
+          value={state.foregroundOpacity}
+          min={0}
+          max={1}
+          step={0.05}
+          format={(value) => value.toFixed(2)}
+          onChange={(foregroundOpacity) => update({ foregroundOpacity })}
+        />
+
         <div className="space-y-2">
           <Label>Background</Label>
           <ColorPicker value={state.background} onChange={(background) => update({ background })} />
         </div>
+
+        <SliderField
+          label="Background opacity"
+          value={state.backgroundOpacity}
+          min={0}
+          max={1}
+          step={0.05}
+          format={(value) => value.toFixed(2)}
+          onChange={(backgroundOpacity) => update({ backgroundOpacity })}
+        />
 
         <div className="space-y-2">
           <Label>Animation</Label>
