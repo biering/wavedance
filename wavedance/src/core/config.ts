@@ -33,17 +33,21 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
     backgroundOpacity: clampOpacity(config.backgroundOpacity),
     animation: config.animation ?? "wave",
     wave: {
-      scale: config.wave?.scale ?? 0.004,
-      speed: config.wave?.speed ?? 0.0003,
-      threshold: config.wave?.threshold ?? 0.15,
-      softness: config.wave?.softness ?? 0.5,
-      seed: config.wave?.seed ?? 42,
+      scale: config.wave?.scale ?? 0.01,
+      speed: config.wave?.speed ?? 0.001,
     },
     random: {
       speed: config.random?.speed ?? 0.8,
       minOpacity: config.random?.minOpacity ?? 0.05,
       maxOpacity: config.random?.maxOpacity ?? 1,
       seed: config.random?.seed ?? 42,
+    },
+    plasma: {
+      scale: config.plasma?.scale ?? 0.004,
+      speed: config.plasma?.speed ?? 0.0003,
+      threshold: config.plasma?.threshold ?? 0.15,
+      softness: config.plasma?.softness ?? 0.5,
+      seed: config.plasma?.seed ?? 42,
     },
     devicePixelRatio:
       config.devicePixelRatio ?? (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1),

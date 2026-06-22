@@ -14,7 +14,7 @@ describe("FieldComputer", () => {
   })
 
   it("wave animation produces values in [0, 1] without NaN", () => {
-    const config = resolveConfig({ animation: "wave", wave: { seed: 7 } })
+    const config = resolveConfig({ animation: "wave" })
     const field = new FieldComputer(config.maxDots, config)
     const intensities = field.compute(grid, 1000, 16)
 
@@ -28,7 +28,7 @@ describe("FieldComputer", () => {
   it("wave animation changes over time", () => {
     const config = resolveConfig({
       animation: "wave",
-      wave: { seed: 7, speed: 1, threshold: 0.2, softness: 0.6 },
+      wave: { speed: 0.01 },
     })
     const field = new FieldComputer(config.maxDots, config)
     const early = Float32Array.from(field.compute(grid, 0, 16))
@@ -67,14 +67,22 @@ describe("FieldComputer", () => {
     }
   })
 
-  it("none animation sets all dots to full opacity", () => {
-    const config = resolveConfig({ animation: "none" })
+  it("plasma animation produces values in [0, 1] and changes over time", () => {
+    const config = resolveConfig({ animation: "plasma", plasma: { seed: 7, speed: 1 } })
     const field = new FieldComputer(config.maxDots, config)
-    const intensities = field.compute(grid, 0, 16)
+    const early = Float32Array.from(field.compute(grid, 0, 16))
+    const late = Float32Array.from(field.compute(grid, 5_000, 16))
 
+    let changed = 0
     for (let i = 0; i < grid.count; i++) {
-      expect(intensities[i]).toBe(1)
+      expect(early[i]).toBeGreaterThanOrEqual(0)
+      expect(early[i]).toBeLessThanOrEqual(1)
+      expect(Number.isNaN(early[i])).toBe(false)
+      if (early[i] !== late[i]) {
+        changed++
+      }
     }
+    expect(changed).toBeGreaterThan(0)
   })
 
   it("hot path does not allocate new intensity buffers", () => {

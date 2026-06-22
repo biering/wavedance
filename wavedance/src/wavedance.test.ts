@@ -87,7 +87,7 @@ describe("createWavedance", () => {
   })
 
   it("updates configuration at runtime", () => {
-    const instance = createWavedance(container, { animation: "none", dotSize: 2 })
+    const instance = createWavedance(container, { animation: "random", dotSize: 2 })
     instance.update({
       animation: "wave",
       dotSize: 4,

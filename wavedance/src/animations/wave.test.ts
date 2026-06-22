@@ -14,11 +14,8 @@ describe("WaveAnimation", () => {
 
   it("produces different intensities at different times", () => {
     const wave = new WaveAnimation({
-      scale: 0.008,
-      speed: 1,
-      threshold: 0.2,
-      softness: 0.6,
-      seed: 7,
+      scale: 0.01,
+      speed: 0.01,
     })
     const intensities = new Float32Array(grid.count)
 

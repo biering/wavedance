@@ -8,6 +8,7 @@ export type {
   GapConfig,
   WaveAnimationOptions,
   RandomAnimationOptions,
+  PlasmaAnimationOptions,
   WavedanceConfig,
   ResolvedWavedanceConfig,
   WavedanceInstance,

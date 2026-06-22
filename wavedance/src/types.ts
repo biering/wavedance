@@ -1,4 +1,4 @@
-export type AnimationType = "none" | "random" | "wave"
+export type AnimationType = "random" | "wave" | "plasma"
 
 export interface GapConfig {
   x: number
@@ -6,16 +6,10 @@ export interface GapConfig {
 }
 
 export interface WaveAnimationOptions {
-  /** Noise sampling scale. Lower = larger clusters. Default: 0.008 */
+  /** Spatial frequency of the sine layers. Default: 0.01 */
   scale?: number
-  /** Animation speed multiplier. Default: 0.0004 */
+  /** Animation speed multiplier. Default: 0.001 */
   speed?: number
-  /** Lower edge of smoothstep threshold. Default: 0.35 */
-  threshold?: number
-  /** Width of the fade transition. Default: 0.25 */
-  softness?: number
-  /** Noise seed for deterministic output. Default: 42 */
-  seed?: number
 }
 
 export interface RandomAnimationOptions {
@@ -26,6 +20,19 @@ export interface RandomAnimationOptions {
   /** Maximum target opacity. Default: 1 */
   maxOpacity?: number
   /** RNG seed for deterministic output. Default: 42 */
+  seed?: number
+}
+
+export interface PlasmaAnimationOptions {
+  /** Noise sampling scale. Lower = larger clusters. Default: 0.004 */
+  scale?: number
+  /** Animation speed multiplier. Default: 0.0003 */
+  speed?: number
+  /** Lower edge of smoothstep threshold. Default: 0.15 */
+  threshold?: number
+  /** Width of the fade transition. Default: 0.5 */
+  softness?: number
+  /** Noise seed for deterministic output. Default: 42 */
   seed?: number
 }
 
@@ -48,6 +55,8 @@ export interface WavedanceConfig {
   wave?: WaveAnimationOptions
   /** Random animation options */
   random?: RandomAnimationOptions
+  /** Plasma animation options */
+  plasma?: PlasmaAnimationOptions
   /** Device pixel ratio override. Default: window.devicePixelRatio */
   devicePixelRatio?: number
   /** Safety cap on dot count. Default: 100000 */
@@ -66,6 +75,7 @@ export interface ResolvedWavedanceConfig {
   animation: AnimationType
   wave: Required<WaveAnimationOptions>
   random: Required<RandomAnimationOptions>
+  plasma: Required<PlasmaAnimationOptions>
   devicePixelRatio: number
   maxDots: number
   respectReducedMotion: boolean

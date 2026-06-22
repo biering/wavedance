@@ -67,11 +67,15 @@ export function Controls({ onChange }: ControlsProps) {
       wave: {
         scale: next.waveScale,
         speed: next.waveSpeed,
-        threshold: next.waveThreshold,
-        softness: next.waveSoftness,
       },
       random: {
         speed: next.randomSpeed,
+      },
+      plasma: {
+        scale: next.plasmaScale,
+        speed: next.plasmaSpeed,
+        threshold: next.plasmaThreshold,
+        softness: next.plasmaSoftness,
       },
     })
   }
@@ -149,7 +153,7 @@ export function Controls({ onChange }: ControlsProps) {
             <SelectContent>
               <SelectItem value="wave">Wave</SelectItem>
               <SelectItem value="random">Random</SelectItem>
-              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="plasma">Plasma</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -160,7 +164,7 @@ export function Controls({ onChange }: ControlsProps) {
               label="Wave scale"
               value={state.waveScale}
               min={0.002}
-              max={0.02}
+              max={0.05}
               step={0.001}
               format={(value) => value.toFixed(3)}
               onChange={(waveScale) => update({ waveScale })}
@@ -169,28 +173,10 @@ export function Controls({ onChange }: ControlsProps) {
               label="Wave speed"
               value={state.waveSpeed}
               min={0.0001}
-              max={0.002}
+              max={0.005}
               step={0.0001}
               format={(value) => value.toFixed(4)}
               onChange={(waveSpeed) => update({ waveSpeed })}
-            />
-            <SliderField
-              label="Threshold"
-              value={state.waveThreshold}
-              min={0}
-              max={0.8}
-              step={0.05}
-              format={(value) => value.toFixed(2)}
-              onChange={(waveThreshold) => update({ waveThreshold })}
-            />
-            <SliderField
-              label="Softness"
-              value={state.waveSoftness}
-              min={0.05}
-              max={0.5}
-              step={0.05}
-              format={(value) => value.toFixed(2)}
-              onChange={(waveSoftness) => update({ waveSoftness })}
             />
           </>
         )}
@@ -205,6 +191,47 @@ export function Controls({ onChange }: ControlsProps) {
             format={(value) => value.toFixed(1)}
             onChange={(randomSpeed) => update({ randomSpeed })}
           />
+        )}
+
+        {state.animation === "plasma" && (
+          <>
+            <SliderField
+              label="Plasma scale"
+              value={state.plasmaScale}
+              min={0.002}
+              max={0.02}
+              step={0.001}
+              format={(value) => value.toFixed(3)}
+              onChange={(plasmaScale) => update({ plasmaScale })}
+            />
+            <SliderField
+              label="Plasma speed"
+              value={state.plasmaSpeed}
+              min={0.0001}
+              max={0.002}
+              step={0.0001}
+              format={(value) => value.toFixed(4)}
+              onChange={(plasmaSpeed) => update({ plasmaSpeed })}
+            />
+            <SliderField
+              label="Threshold"
+              value={state.plasmaThreshold}
+              min={0}
+              max={0.8}
+              step={0.05}
+              format={(value) => value.toFixed(2)}
+              onChange={(plasmaThreshold) => update({ plasmaThreshold })}
+            />
+            <SliderField
+              label="Softness"
+              value={state.plasmaSoftness}
+              min={0.05}
+              max={0.5}
+              step={0.05}
+              format={(value) => value.toFixed(2)}
+              onChange={(plasmaSoftness) => update({ plasmaSoftness })}
+            />
+          </>
         )}
 
         <a

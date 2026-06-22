@@ -8,11 +8,13 @@ export const defaultControlsState = {
   background: "#161616",
   backgroundOpacity: 1,
   animation: "wave" as AnimationType,
-  waveScale: 0.004,
-  waveSpeed: 0.0003,
-  waveThreshold: 0.15,
-  waveSoftness: 0.5,
+  waveScale: 0.01,
+  waveSpeed: 0.001,
   randomSpeed: 0.8,
+  plasmaScale: 0.004,
+  plasmaSpeed: 0.0003,
+  plasmaThreshold: 0.15,
+  plasmaSoftness: 0.5,
 }
 
 export const defaultWavedanceConfig: WavedanceConfig = {
@@ -26,7 +28,11 @@ export const defaultWavedanceConfig: WavedanceConfig = {
   wave: {
     scale: defaultControlsState.waveScale,
     speed: defaultControlsState.waveSpeed,
-    threshold: defaultControlsState.waveThreshold,
-    softness: defaultControlsState.waveSoftness,
+  },
+  plasma: {
+    scale: defaultControlsState.plasmaScale,
+    speed: defaultControlsState.plasmaSpeed,
+    threshold: defaultControlsState.plasmaThreshold,
+    softness: defaultControlsState.plasmaSoftness,
   },
 }

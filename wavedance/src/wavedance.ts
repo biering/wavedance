@@ -45,7 +45,6 @@ export function createWavedance(
   let resizeTimer = 0
 
   const shouldAnimate = (): boolean => {
-    if (resolved.animation === "none") return false
     if (resolved.respectReducedMotion && prefersReducedMotion()) return false
     return visible && inView
   }
@@ -167,6 +166,7 @@ export function createWavedance(
         ...partial,
         wave: partial.wave ? { ...resolved.wave, ...partial.wave } : resolved.wave,
         random: partial.random ? { ...resolved.random, ...partial.random } : resolved.random,
+        plasma: partial.plasma ? { ...resolved.plasma, ...partial.plasma } : resolved.plasma,
       }
       resolved = resolveConfig(merged)
       field.updateConfig(resolved)
@@ -220,6 +220,7 @@ export function createWavedance(
         gap: { ...resolved.gap },
         wave: { ...resolved.wave },
         random: { ...resolved.random },
+        plasma: { ...resolved.plasma },
       }
     },
   }

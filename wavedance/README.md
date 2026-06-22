@@ -23,10 +23,8 @@ const wavedance = createWavedance(container, {
   background: "#161616",
   animation: "wave",
   wave: {
-    scale: 0.004,
-    speed: 0.0003,
-    threshold: 0.15,
-    softness: 0.5,
+    scale: 0.01,
+    speed: 0.001,
   },
 });
 
@@ -47,7 +45,13 @@ wavedance.destroy();
 | `foregroundOpacity` | `number` | `1` | Dot opacity multiplier (0–1) |
 | `background` | `string` | `#161616` | Canvas background (hex) |
 | `backgroundOpacity` | `number` | `1` | Background opacity (0–1) |
-| `animation` | `"none" \| "random" \| "wave"` | `"wave"` | Animation mode |
+| `animation` | `"random" \| "wave" \| "plasma"` | `"wave"` | Animation mode |
+| `wave.scale` | `number` | `0.01` | Wave spatial frequency |
+| `wave.speed` | `number` | `0.001` | Wave animation speed |
+| `plasma.scale` | `number` | `0.004` | Plasma noise scale |
+| `plasma.speed` | `number` | `0.0003` | Plasma animation speed |
+| `plasma.threshold` | `number` | `0.15` | Plasma lower threshold |
+| `plasma.softness` | `number` | `0.5` | Plasma fade width |
 | `devicePixelRatio` | `number` | `window.devicePixelRatio` | DPR override |
 | `maxDots` | `number` | `100000` | Safety cap on dot count |
 | `respectReducedMotion` | `boolean` | `true` | Honor prefers-reduced-motion |

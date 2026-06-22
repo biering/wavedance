@@ -1,4 +1,4 @@
-import { computeNoneField } from "../animations/none"
+import { PlasmaAnimation } from "../animations/plasma"
 import { RandomAnimation } from "../animations/random"
 import { WaveAnimation } from "../animations/wave"
 import type { AnimationType, GridLayout, ResolvedWavedanceConfig } from "../types"
@@ -7,6 +7,7 @@ export class FieldComputer {
   private readonly intensities: Float32Array
   private wave: WaveAnimation
   private random: RandomAnimation
+  private plasma: PlasmaAnimation
   private animation: AnimationType
 
   constructor(maxDots: number, config: ResolvedWavedanceConfig) {
@@ -14,6 +15,7 @@ export class FieldComputer {
     this.animation = config.animation
     this.wave = new WaveAnimation(config.wave)
     this.random = new RandomAnimation(maxDots, config.random)
+    this.plasma = new PlasmaAnimation(config.plasma)
   }
 
   get buffer(): Float32Array {
@@ -29,20 +31,19 @@ export class FieldComputer {
     }
     this.wave.updateOptions(config.wave)
     this.random.updateOptions(config.random)
+    this.plasma.updateOptions(config.plasma)
   }
 
   compute(grid: GridLayout, time: number, deltaMs: number): Float32Array {
-    const count = grid.count
-
     switch (this.animation) {
-      case "none":
-        computeNoneField(this.intensities, count)
-        break
       case "wave":
         this.wave.compute(grid, this.intensities, time)
         break
       case "random":
         this.random.compute(grid, this.intensities, deltaMs)
+        break
+      case "plasma":
+        this.plasma.compute(grid, this.intensities, time)
         break
     }
 
