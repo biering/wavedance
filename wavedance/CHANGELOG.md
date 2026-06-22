@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/biering/wavedance/compare/wavedance-v0.3.0...wavedance-v0.4.0) (2026-06-22)
+
+
+### Features
+
+* added plasma animation & cleanup ([7794bbc](https://github.com/biering/wavedance/commit/7794bbc858d30bf03d9b287258e2b2e5a75cb8c6))
+
+
+### Bug Fixes
+
+* tsconfig ([62b3d1b](https://github.com/biering/wavedance/commit/62b3d1b412d393a7bc3afc1b005f5675cd3331e1))
+
 ## [0.3.0](https://github.com/biering/wavedance/compare/wavedance-v0.2.1...wavedance-v0.3.0) (2026-06-08)
 
 
