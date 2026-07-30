@@ -4,6 +4,10 @@ import type { Renderer } from "./renderer"
 
 const BUCKET_COUNT = 32
 
+// At full `dotSizeVariation`, a fully-lit dot grows to this multiple of `dotSize`
+// while an unlit dot shrinks toward nothing — so brighter dots read as larger.
+const MAX_SIZE_SCALE = 4
+
 export class Canvas2DRenderer implements Renderer {
   private canvas: HTMLCanvasElement | null = null
   private ctx: CanvasRenderingContext2D | null = null
@@ -12,10 +16,11 @@ export class Canvas2DRenderer implements Renderer {
     () => new Int32Array(0),
   )
   private readonly bucketCounts = new Int32Array(BUCKET_COUNT)
-  private foregroundRgb = { r: 255, g: 255, b: 255 }
-  private backgroundRgb = { r: 0, g: 0, b: 0 }
+  private foregroundFill = "rgb(255,255,255)"
+  private backgroundFill = "rgba(0,0,0,1)"
   private lastForeground = ""
-  private lastBackgroundFill = ""
+  private lastBackground = ""
+  private lastBackgroundOpacity = Number.NaN
 
   init(container: HTMLElement): void {
     this.canvas = document.createElement("canvas")
@@ -50,33 +55,43 @@ export class Canvas2DRenderer implements Renderer {
     const canvas = this.canvas
     if (!ctx || !canvas) return
 
-    const { dotSize, foreground, foregroundOpacity, background, backgroundOpacity, dpr } = options
+    const {
+      dotSize,
+      dotSizeVariation,
+      foreground,
+      foregroundOpacity,
+      background,
+      backgroundOpacity,
+      dpr,
+    } = options
     const count = grid.count
     const dotPixelSize = Math.max(1, dotSize * dpr)
+    const variableSize = dotSizeVariation > 0
 
+    // Rebuild the fill strings only when colors change, not every frame.
     if (foreground !== this.lastForeground) {
-      this.foregroundRgb = parseHexColor(foreground)
+      const { r, g, b } = parseHexColor(foreground)
+      this.foregroundFill = `rgb(${r},${g},${b})`
       this.lastForeground = foreground
     }
 
-    const backgroundFillKey = `${background}:${backgroundOpacity}`
-    if (backgroundFillKey !== this.lastBackgroundFill) {
-      this.backgroundRgb = parseHexColor(background)
-      this.lastBackgroundFill = backgroundFillKey
+    if (background !== this.lastBackground || backgroundOpacity !== this.lastBackgroundOpacity) {
+      const { r, g, b } = parseHexColor(background)
+      this.backgroundFill = `rgba(${r},${g},${b},${backgroundOpacity})`
+      this.lastBackground = background
+      this.lastBackgroundOpacity = backgroundOpacity
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     if (backgroundOpacity > 0) {
-      const { r, g, b } = this.backgroundRgb
-      ctx.fillStyle = `rgba(${r},${g},${b},${backgroundOpacity})`
+      ctx.fillStyle = this.backgroundFill
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
     this.bucketDots(count, intensities)
 
-    const { r, g, b } = this.foregroundRgb
-    ctx.fillStyle = `rgb(${r},${g},${b})`
+    ctx.fillStyle = this.foregroundFill
 
     for (let bucket = 0; bucket < BUCKET_COUNT; bucket++) {
       const bucketSize = this.bucketCounts[bucket]
@@ -88,11 +103,24 @@ export class Canvas2DRenderer implements Renderer {
       ctx.globalAlpha = alpha
       const indices = this.buckets[bucket]
 
-      for (let i = 0; i < bucketSize; i++) {
-        const idx = indices[i]
-        const x = grid.x[idx] - dotPixelSize / 2
-        const y = grid.y[idx] - dotPixelSize / 2
-        ctx.fillRect(x, y, dotPixelSize, dotPixelSize)
+      if (variableSize) {
+        for (let i = 0; i < bucketSize; i++) {
+          const idx = indices[i]
+          // Scale size by intensity like opacity: bright dots grow toward
+          // MAX_SIZE_SCALE×, faint dots shrink toward 0. `dotSizeVariation`
+          // blends between uniform (0) and fully intensity-driven (1).
+          const scale = 1 + dotSizeVariation * (intensities[idx] * MAX_SIZE_SCALE - 1)
+          const size = dotPixelSize * scale
+          if (size < 0.5) continue
+          const half = size / 2
+          ctx.fillRect(grid.x[idx] - half, grid.y[idx] - half, size, size)
+        }
+      } else {
+        const half = dotPixelSize / 2
+        for (let i = 0; i < bucketSize; i++) {
+          const idx = indices[i]
+          ctx.fillRect(grid.x[idx] - half, grid.y[idx] - half, dotPixelSize, dotPixelSize)
+        }
       }
     }
 

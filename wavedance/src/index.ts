@@ -9,6 +9,7 @@ export type {
   WaveAnimationOptions,
   RandomAnimationOptions,
   PlasmaAnimationOptions,
+  FlowAnimationOptions,
   WavedanceConfig,
   ResolvedWavedanceConfig,
   WavedanceInstance,

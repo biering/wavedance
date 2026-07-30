@@ -1,3 +1,4 @@
+import { smoothstep } from "../core/noise"
 import type { GridLayout, WaveAnimationOptions } from "../types"
 
 export class WaveAnimation {
@@ -12,8 +13,10 @@ export class WaveAnimation {
   }
 
   compute(grid: GridLayout, intensities: Float32Array, time: number): void {
-    const { scale, speed } = this.options
+    const { scale, speed, threshold, softness } = this.options
     const t = time * speed
+    const gated = threshold > 0
+    const edge1 = threshold + softness
 
     for (let i = 0; i < grid.count; i++) {
       const x = grid.x[i] * scale
@@ -27,7 +30,8 @@ export class WaveAnimation {
       const cy = y + 0.5 * Math.cos(t * 0.6)
       v += Math.sin(Math.sqrt(cx * cx + cy * cy) + t)
 
-      intensities[i] = v * 0.125 + 0.5
+      const intensity = v * 0.125 + 0.5
+      intensities[i] = gated ? smoothstep(threshold, edge1, intensity) : intensity
     }
   }
 }

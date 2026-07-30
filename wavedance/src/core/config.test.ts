@@ -23,3 +23,38 @@ describe("resolveConfig opacity", () => {
     expect(config.backgroundOpacity).toBe(0.25)
   })
 })
+
+describe("resolveConfig dotSizeVariation", () => {
+  it("defaults to 0.3", () => {
+    expect(resolveConfig({}).dotSizeVariation).toBe(0.3)
+  })
+
+  it("clamps to 0–1", () => {
+    expect(resolveConfig({ dotSizeVariation: -1 }).dotSizeVariation).toBe(0)
+    expect(resolveConfig({ dotSizeVariation: 0.4 }).dotSizeVariation).toBe(0.4)
+    expect(resolveConfig({ dotSizeVariation: 2 }).dotSizeVariation).toBe(1)
+  })
+})
+
+describe("resolveConfig wave gate", () => {
+  it("defaults to a gentle gate (threshold 0.25, softness 0.4)", () => {
+    const wave = resolveConfig({}).wave
+    expect(wave.threshold).toBe(0.25)
+    expect(wave.softness).toBe(0.4)
+  })
+
+  it("preserves configured wave threshold and softness", () => {
+    const wave = resolveConfig({ wave: { threshold: 0.4, softness: 0.2 } }).wave
+    expect(wave.threshold).toBe(0.4)
+    expect(wave.softness).toBe(0.2)
+  })
+})
+
+describe("resolveConfig flow", () => {
+  it("provides flow defaults", () => {
+    const flow = resolveConfig({}).flow
+    expect(flow.scale).toBeGreaterThan(0)
+    expect(flow.speed).toBeGreaterThan(0)
+    expect(flow.seed).toBe(42)
+  })
+})

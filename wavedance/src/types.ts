@@ -1,4 +1,4 @@
-export type AnimationType = "random" | "wave" | "plasma"
+export type AnimationType = "random" | "wave" | "plasma" | "flow"
 
 export interface GapConfig {
   x: number
@@ -10,6 +10,14 @@ export interface WaveAnimationOptions {
   scale?: number
   /** Animation speed multiplier. Default: 0.001 */
   speed?: number
+  /**
+   * Lower edge of the smoothstep gate applied to each dot. Dots below this
+   * fade to fully empty; dots at `threshold + softness` reach full opacity.
+   * `0` disables the gate (smooth, gapless — the original behavior). Default: 0
+   */
+  threshold?: number
+  /** Width of the fade transition above `threshold`. Default: 0.5 */
+  softness?: number
 }
 
 export interface RandomAnimationOptions {
@@ -36,9 +44,25 @@ export interface PlasmaAnimationOptions {
   seed?: number
 }
 
+export interface FlowAnimationOptions {
+  /** Spatial scale of the flow field. Lower = broader currents. Default: 0.006 */
+  scale?: number
+  /** Animation speed multiplier. Default: 0.0004 */
+  speed?: number
+  /** Noise seed for deterministic output. Default: 42 */
+  seed?: number
+}
+
 export interface WavedanceConfig {
   /** Dot diameter in CSS pixels. Default: 2 */
   dotSize?: number
+  /**
+   * How much each dot's size tracks its intensity (0–1), mirroring opacity:
+   * more visible (brighter) dots grow larger, fainter dots shrink toward
+   * nothing. `0` draws every dot at `dotSize` (uniform, the original
+   * behavior); at `1` a fully-lit dot grows to ~4× `dotSize`. Default: 0
+   */
+  dotSizeVariation?: number
   /** Gap between dots in CSS pixels (symmetric or per-axis). Default: 12 */
   gap?: number | GapConfig
   /** Dot color as hex string. Default: "#7c7c7c" */
@@ -57,6 +81,8 @@ export interface WavedanceConfig {
   random?: RandomAnimationOptions
   /** Plasma animation options */
   plasma?: PlasmaAnimationOptions
+  /** Flow animation options */
+  flow?: FlowAnimationOptions
   /** Device pixel ratio override. Default: window.devicePixelRatio */
   devicePixelRatio?: number
   /** Safety cap on dot count. Default: 100000 */
@@ -67,6 +93,7 @@ export interface WavedanceConfig {
 
 export interface ResolvedWavedanceConfig {
   dotSize: number
+  dotSizeVariation: number
   gap: GapConfig
   foreground: string
   foregroundOpacity: number
@@ -76,6 +103,7 @@ export interface ResolvedWavedanceConfig {
   wave: Required<WaveAnimationOptions>
   random: Required<RandomAnimationOptions>
   plasma: Required<PlasmaAnimationOptions>
+  flow: Required<FlowAnimationOptions>
   devicePixelRatio: number
   maxDots: number
   respectReducedMotion: boolean
@@ -103,6 +131,7 @@ export interface GridLayout {
 
 export interface DrawOptions {
   dotSize: number
+  dotSizeVariation: number
   foreground: string
   foregroundOpacity: number
   background: string

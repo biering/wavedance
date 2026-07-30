@@ -9,8 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import type { AnimationType, WavedanceConfig } from "wavedance"
 import { useState } from "react"
+import type { AnimationType, WavedanceConfig } from "wavedance"
 import { defaultControlsState } from "../defaults"
 
 export interface ControlsProps {
@@ -58,6 +58,7 @@ export function Controls({ onChange }: ControlsProps) {
     setState(next)
     onChange({
       dotSize: next.dotSize,
+      dotSizeVariation: next.dotSizeVariation,
       gap: next.gap,
       foreground: next.foreground,
       foregroundOpacity: next.foregroundOpacity,
@@ -67,6 +68,8 @@ export function Controls({ onChange }: ControlsProps) {
       wave: {
         scale: next.waveScale,
         speed: next.waveSpeed,
+        threshold: next.waveThreshold,
+        softness: next.waveSoftness,
       },
       random: {
         speed: next.randomSpeed,
@@ -76,6 +79,10 @@ export function Controls({ onChange }: ControlsProps) {
         speed: next.plasmaSpeed,
         threshold: next.plasmaThreshold,
         softness: next.plasmaSoftness,
+      },
+      flow: {
+        scale: next.flowScale,
+        speed: next.flowSpeed,
       },
     })
   }
@@ -99,6 +106,16 @@ export function Controls({ onChange }: ControlsProps) {
           step={1}
           format={(value) => `${value}px`}
           onChange={(dotSize) => update({ dotSize })}
+        />
+
+        <SliderField
+          label="Size variation"
+          value={state.dotSizeVariation}
+          min={0}
+          max={1}
+          step={0.05}
+          format={(value) => value.toFixed(2)}
+          onChange={(dotSizeVariation) => update({ dotSizeVariation })}
         />
 
         <SliderField
@@ -154,6 +171,7 @@ export function Controls({ onChange }: ControlsProps) {
               <SelectItem value="wave">Wave</SelectItem>
               <SelectItem value="random">Random</SelectItem>
               <SelectItem value="plasma">Plasma</SelectItem>
+              <SelectItem value="flow">Flow</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -177,6 +195,24 @@ export function Controls({ onChange }: ControlsProps) {
               step={0.0001}
               format={(value) => value.toFixed(4)}
               onChange={(waveSpeed) => update({ waveSpeed })}
+            />
+            <SliderField
+              label="Threshold"
+              value={state.waveThreshold}
+              min={0}
+              max={0.9}
+              step={0.05}
+              format={(value) => value.toFixed(2)}
+              onChange={(waveThreshold) => update({ waveThreshold })}
+            />
+            <SliderField
+              label="Softness"
+              value={state.waveSoftness}
+              min={0.05}
+              max={0.5}
+              step={0.05}
+              format={(value) => value.toFixed(2)}
+              onChange={(waveSoftness) => update({ waveSoftness })}
             />
           </>
         )}
@@ -230,6 +266,29 @@ export function Controls({ onChange }: ControlsProps) {
               step={0.05}
               format={(value) => value.toFixed(2)}
               onChange={(plasmaSoftness) => update({ plasmaSoftness })}
+            />
+          </>
+        )}
+
+        {state.animation === "flow" && (
+          <>
+            <SliderField
+              label="Flow scale"
+              value={state.flowScale}
+              min={0.002}
+              max={0.02}
+              step={0.001}
+              format={(value) => value.toFixed(3)}
+              onChange={(flowScale) => update({ flowScale })}
+            />
+            <SliderField
+              label="Flow speed"
+              value={state.flowSpeed}
+              min={0.0001}
+              max={0.002}
+              step={0.0001}
+              format={(value) => value.toFixed(4)}
+              onChange={(flowSpeed) => update({ flowSpeed })}
             />
           </>
         )}

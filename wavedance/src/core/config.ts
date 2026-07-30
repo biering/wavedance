@@ -1,7 +1,7 @@
 import type { GapConfig, ResolvedWavedanceConfig, WavedanceConfig } from "../types"
 import { normalizeHexColor } from "./color"
 
-const DEFAULT_GAP = 10
+const DEFAULT_GAP = 8
 const DEFAULT_DOT_SIZE = 1
 
 export function clampOpacity(value: number | undefined, fallback = 1): number {
@@ -26,6 +26,7 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
 
   return {
     dotSize: config.dotSize ?? DEFAULT_DOT_SIZE,
+    dotSizeVariation: clampOpacity(config.dotSizeVariation, 0.3),
     gap,
     foreground: normalizeHexColor(config.foreground ?? "#7c7c7c"),
     foregroundOpacity: clampOpacity(config.foregroundOpacity),
@@ -35,6 +36,8 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
     wave: {
       scale: config.wave?.scale ?? 0.01,
       speed: config.wave?.speed ?? 0.001,
+      threshold: config.wave?.threshold ?? 0.25,
+      softness: config.wave?.softness ?? 0.4,
     },
     random: {
       speed: config.random?.speed ?? 0.8,
@@ -48,6 +51,11 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
       threshold: config.plasma?.threshold ?? 0.15,
       softness: config.plasma?.softness ?? 0.5,
       seed: config.plasma?.seed ?? 42,
+    },
+    flow: {
+      scale: config.flow?.scale ?? 0.006,
+      speed: config.flow?.speed ?? 0.0004,
+      seed: config.flow?.seed ?? 42,
     },
     devicePixelRatio:
       config.devicePixelRatio ?? (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1),
