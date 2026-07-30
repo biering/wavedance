@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0](https://github.com/biering/wavedance/compare/wavedance-v0.4.0...wavedance-v0.5.0) (2026-07-30)
+
+
+### Features
+
+* added husky pre-commit & perf improvements ([d62873f](https://github.com/biering/wavedance/commit/d62873fd10b9bf8328f418f8b1c140615bc053d3))
+* added new flow animation and dynamic size scaling ([1c8a360](https://github.com/biering/wavedance/commit/1c8a3604d41fc6948f7bf9a959dc987879b79c08))
+* added new flow animation and dynamic size scaling ([eeab92f](https://github.com/biering/wavedance/commit/eeab92fe458f67a9c464f56a172ca288b492e160))
+
 ## [0.4.0](https://github.com/biering/wavedance/compare/wavedance-v0.3.0...wavedance-v0.4.0) (2026-06-22)
 
 
