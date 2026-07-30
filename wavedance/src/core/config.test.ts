@@ -58,3 +58,24 @@ describe("resolveConfig flow", () => {
     expect(flow.seed).toBe(42)
   })
 })
+
+describe("resolveConfig devicePixelRatio", () => {
+  it("defaults maxDevicePixelRatio to 2", () => {
+    expect(resolveConfig({}).maxDevicePixelRatio).toBe(2)
+  })
+
+  it("caps the auto-detected dpr at maxDevicePixelRatio", () => {
+    const original = window.devicePixelRatio
+    Object.defineProperty(window, "devicePixelRatio", { value: 3, configurable: true })
+    try {
+      expect(resolveConfig({}).devicePixelRatio).toBe(2)
+      expect(resolveConfig({ maxDevicePixelRatio: 1 }).devicePixelRatio).toBe(1)
+    } finally {
+      Object.defineProperty(window, "devicePixelRatio", { value: original, configurable: true })
+    }
+  })
+
+  it("lets an explicit devicePixelRatio bypass the cap", () => {
+    expect(resolveConfig({ devicePixelRatio: 3, maxDevicePixelRatio: 2 }).devicePixelRatio).toBe(3)
+  })
+})

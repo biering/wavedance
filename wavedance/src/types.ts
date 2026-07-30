@@ -83,8 +83,13 @@ export interface WavedanceConfig {
   plasma?: PlasmaAnimationOptions
   /** Flow animation options */
   flow?: FlowAnimationOptions
-  /** Device pixel ratio override. Default: window.devicePixelRatio */
+  /** Device pixel ratio override. Default: auto-detected, capped by `maxDevicePixelRatio`. */
   devicePixelRatio?: number
+  /**
+   * Upper bound applied to the auto-detected device pixel ratio, to cap paint
+   * cost on high-DPR screens. Ignored when `devicePixelRatio` is set. Default: 2
+   */
+  maxDevicePixelRatio?: number
   /** Safety cap on dot count. Default: 100000 */
   maxDots?: number
   /** Pause animation when prefers-reduced-motion is set. Default: true */
@@ -105,6 +110,7 @@ export interface ResolvedWavedanceConfig {
   plasma: Required<PlasmaAnimationOptions>
   flow: Required<FlowAnimationOptions>
   devicePixelRatio: number
+  maxDevicePixelRatio: number
   maxDots: number
   respectReducedMotion: boolean
 }

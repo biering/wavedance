@@ -82,11 +82,16 @@ export class Canvas2DRenderer implements Renderer {
       this.lastBackgroundOpacity = backgroundOpacity
     }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    if (backgroundOpacity > 0) {
+    if (backgroundOpacity >= 1) {
+      // Opaque background fully repaints the frame, so clearRect is redundant.
       ctx.fillStyle = this.backgroundFill
       ctx.fillRect(0, 0, canvas.width, canvas.height)
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (backgroundOpacity > 0) {
+        ctx.fillStyle = this.backgroundFill
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
     }
 
     this.bucketDots(count, intensities)

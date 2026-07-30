@@ -24,6 +24,11 @@ export function resolveGap(gap: number | GapConfig | undefined): GapConfig {
 export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceConfig {
   const gap = resolveGap(config.gap)
 
+  // Bound the auto-detected DPR: on 3× displays an uncapped backing store is 9×
+  // the pixels to clear/fill every frame. An explicit devicePixelRatio opts out.
+  const maxDevicePixelRatio = config.maxDevicePixelRatio ?? 2
+  const autoDpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1
+
   return {
     dotSize: config.dotSize ?? DEFAULT_DOT_SIZE,
     dotSizeVariation: clampOpacity(config.dotSizeVariation, 0.3),
@@ -57,8 +62,8 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
       speed: config.flow?.speed ?? 0.0004,
       seed: config.flow?.seed ?? 42,
     },
-    devicePixelRatio:
-      config.devicePixelRatio ?? (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1),
+    devicePixelRatio: config.devicePixelRatio ?? Math.min(autoDpr, maxDevicePixelRatio),
+    maxDevicePixelRatio,
     maxDots: config.maxDots ?? 100_000,
     respectReducedMotion: config.respectReducedMotion ?? true,
   }

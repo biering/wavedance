@@ -142,7 +142,12 @@ describe("createWavedance", () => {
     vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => scheduled.push(cb))
     vi.stubGlobal("cancelAnimationFrame", vi.fn())
 
-    const instance = createWavedance(container, { animation: "wave", respectReducedMotion: true })
+    // Transparent background keeps clearRect as the per-draw signal.
+    const instance = createWavedance(container, {
+      animation: "wave",
+      respectReducedMotion: true,
+      backgroundOpacity: 0,
+    })
     for (let i = 0; i < 5; i++) {
       const next = scheduled[scheduled.length - 1]
       if (next) next(i * 16)

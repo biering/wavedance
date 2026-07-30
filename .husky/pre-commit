@@ -1,0 +1,8 @@
+set -e
+
+# Lint + format staged files, auto-fixing what Biome safely can. If unfixable
+# lint errors remain, Biome exits non-zero and `set -e` aborts the commit.
+pnpm exec biome check --staged --write --files-ignore-unknown=true --no-errors-on-unmatched
+
+# Re-stage the files Biome just fixed so the fixes are part of the commit.
+git update-index --again
