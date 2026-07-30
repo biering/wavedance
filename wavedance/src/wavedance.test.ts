@@ -118,4 +118,38 @@ describe("createWavedance", () => {
       /requires a container element/,
     )
   })
+
+  it("draws once and then idles when prefers-reduced-motion is set", () => {
+    const clearRect = vi.fn()
+    const ctx = {
+      fillStyle: "",
+      globalAlpha: 1,
+      fillRect: vi.fn(),
+      clearRect,
+    } as unknown as CanvasRenderingContext2D
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(ctx)
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: true,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }))
+
+    const scheduled: FrameRequestCallback[] = []
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => scheduled.push(cb))
+    vi.stubGlobal("cancelAnimationFrame", vi.fn())
+
+    const instance = createWavedance(container, { animation: "wave", respectReducedMotion: true })
+    for (let i = 0; i < 5; i++) {
+      const next = scheduled[scheduled.length - 1]
+      if (next) next(i * 16)
+    }
+
+    // A single static frame, not one per animation frame.
+    expect(clearRect).toHaveBeenCalledTimes(1)
+    instance.destroy()
+  })
 })

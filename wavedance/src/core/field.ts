@@ -1,3 +1,4 @@
+import { FlowAnimation } from "../animations/flow"
 import { PlasmaAnimation } from "../animations/plasma"
 import { RandomAnimation } from "../animations/random"
 import { WaveAnimation } from "../animations/wave"
@@ -8,6 +9,7 @@ export class FieldComputer {
   private wave: WaveAnimation
   private random: RandomAnimation
   private plasma: PlasmaAnimation
+  private flow: FlowAnimation
   private animation: AnimationType
 
   constructor(maxDots: number, config: ResolvedWavedanceConfig) {
@@ -16,6 +18,7 @@ export class FieldComputer {
     this.wave = new WaveAnimation(config.wave)
     this.random = new RandomAnimation(maxDots, config.random)
     this.plasma = new PlasmaAnimation(config.plasma)
+    this.flow = new FlowAnimation(config.flow)
   }
 
   get buffer(): Float32Array {
@@ -32,6 +35,7 @@ export class FieldComputer {
     this.wave.updateOptions(config.wave)
     this.random.updateOptions(config.random)
     this.plasma.updateOptions(config.plasma)
+    this.flow.updateOptions(config.flow)
   }
 
   compute(grid: GridLayout, time: number, deltaMs: number): Float32Array {
@@ -44,6 +48,9 @@ export class FieldComputer {
         break
       case "plasma":
         this.plasma.compute(grid, this.intensities, time)
+        break
+      case "flow":
+        this.flow.compute(grid, this.intensities, time)
         break
     }
 

@@ -3,6 +3,7 @@ import { FieldComputer } from "./core/field"
 import { buildGrid } from "./core/grid"
 import { Canvas2DRenderer } from "./render/canvas2d"
 import type {
+  DrawOptions,
   GridLayout,
   ResolvedWavedanceConfig,
   WavedanceConfig,
@@ -31,8 +32,29 @@ export function createWavedance(
   let grid: GridLayout | null = null
   const field = new FieldComputer(resolved.maxDots, resolved)
 
+  // Reused every frame; kept in sync with `resolved` to avoid per-frame allocation.
+  const drawOptions: DrawOptions = {
+    dotSize: resolved.dotSize,
+    dotSizeVariation: resolved.dotSizeVariation,
+    foreground: resolved.foreground,
+    foregroundOpacity: resolved.foregroundOpacity,
+    background: resolved.background,
+    backgroundOpacity: resolved.backgroundOpacity,
+    dpr: resolved.devicePixelRatio,
+  }
+  const syncDrawOptions = (): void => {
+    drawOptions.dotSize = resolved.dotSize
+    drawOptions.dotSizeVariation = resolved.dotSizeVariation
+    drawOptions.foreground = resolved.foreground
+    drawOptions.foregroundOpacity = resolved.foregroundOpacity
+    drawOptions.background = resolved.background
+    drawOptions.backgroundOpacity = resolved.backgroundOpacity
+    drawOptions.dpr = resolved.devicePixelRatio
+  }
+
   let rafId = 0
   let running = false
+  let idleDrawn = false
   let visible = true
   let inView = true
   let startTime = performance.now()
@@ -74,23 +96,23 @@ export function createWavedance(
     lastFrameTime = time
 
     const intensities = field.compute(grid, time - startTime, deltaMs)
-    renderer.draw(grid, intensities, {
-      dotSize: resolved.dotSize,
-      foreground: resolved.foreground,
-      foregroundOpacity: resolved.foregroundOpacity,
-      background: resolved.background,
-      backgroundOpacity: resolved.backgroundOpacity,
-      dpr: resolved.devicePixelRatio,
-    })
+    renderer.draw(grid, intensities, drawOptions)
   }
 
   const loop = (time: number): void => {
     if (!running) return
 
     if (shouldAnimate()) {
+      // Resuming from an idle stretch: reset the frame clock so the delta-based
+      // animations don't jump on the first frame back.
+      if (idleDrawn) lastFrameTime = time
       drawFrame(time)
-    } else if (grid) {
+      idleDrawn = false
+    } else if (grid && !idleDrawn) {
+      // Not animating (hidden, off-screen, or reduced-motion): draw one static
+      // frame, then idle until state changes instead of redrawing every frame.
       drawFrame(time)
+      idleDrawn = true
     }
 
     rafId = requestAnimationFrame(loop)
@@ -167,9 +189,11 @@ export function createWavedance(
         wave: partial.wave ? { ...resolved.wave, ...partial.wave } : resolved.wave,
         random: partial.random ? { ...resolved.random, ...partial.random } : resolved.random,
         plasma: partial.plasma ? { ...resolved.plasma, ...partial.plasma } : resolved.plasma,
+        flow: partial.flow ? { ...resolved.flow, ...partial.flow } : resolved.flow,
       }
       resolved = resolveConfig(merged)
       field.updateConfig(resolved)
+      syncDrawOptions()
 
       if (
         partial.dotSize !== undefined ||
@@ -221,6 +245,7 @@ export function createWavedance(
         wave: { ...resolved.wave },
         random: { ...resolved.random },
         plasma: { ...resolved.plasma },
+        flow: { ...resolved.flow },
       }
     },
   }
