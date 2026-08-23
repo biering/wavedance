@@ -139,7 +139,11 @@ describe("createWavedance", () => {
     }))
 
     const scheduled: FrameRequestCallback[] = []
-    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => scheduled.push(cb))
+    const requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => {
+      scheduled.push(cb)
+      return scheduled.length
+    })
+    vi.stubGlobal("requestAnimationFrame", requestAnimationFrame)
     vi.stubGlobal("cancelAnimationFrame", vi.fn())
 
     // Transparent background keeps clearRect as the per-draw signal.
@@ -155,6 +159,8 @@ describe("createWavedance", () => {
 
     // A single static frame, not one per animation frame.
     expect(clearRect).toHaveBeenCalledTimes(1)
+    // After the idle frame the loop sleeps instead of scheduling rAF forever.
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(1)
     instance.destroy()
   })
 })

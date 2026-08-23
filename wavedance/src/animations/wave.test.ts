@@ -70,4 +70,31 @@ describe("WaveAnimation", () => {
     expect(empty).toBeGreaterThan(0)
     expect(full).toBeGreaterThan(0)
   })
+
+  it("writes slow color territories without changing intensity", () => {
+    const wave = new WaveAnimation({ scale: 0.01, speed: 0.01, threshold: 0.25, softness: 0.4 })
+    const intensities = new Float32Array(grid.count)
+    const tints = new Float32Array(grid.count)
+
+    wave.compute(grid, intensities, 1_000)
+    const snapshot = Float32Array.from(intensities)
+
+    wave.compute(grid, intensities, 1_000, tints)
+
+    let min = 1
+    let max = 0
+    let lit = 0
+    for (let i = 0; i < grid.count; i++) {
+      expect(intensities[i]).toBe(snapshot[i])
+      expect(tints[i]).toBeGreaterThanOrEqual(0)
+      expect(tints[i]).toBeLessThanOrEqual(1)
+      if (intensities[i] > 0.05) {
+        lit++
+        if (tints[i] < min) min = tints[i]
+        if (tints[i] > max) max = tints[i]
+      }
+    }
+    expect(lit).toBeGreaterThan(0)
+    expect(max - min).toBeGreaterThan(0.2)
+  })
 })

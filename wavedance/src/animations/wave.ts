@@ -12,11 +12,14 @@ export class WaveAnimation {
     this.options = { ...options }
   }
 
-  compute(grid: GridLayout, intensities: Float32Array, time: number): void {
+  compute(grid: GridLayout, intensities: Float32Array, time: number, tints?: Float32Array): void {
     const { scale, speed, threshold, softness } = this.options
     const t = time * speed
     const gated = threshold > 0
     const edge1 = threshold + softness
+    const tintT = t * 0.48
+    const invW = 1 / Math.max(1, grid.width * grid.dpr)
+    const invH = 1 / Math.max(1, grid.height * grid.dpr)
 
     for (let i = 0; i < grid.count; i++) {
       const x = grid.x[i] * scale
@@ -32,6 +35,15 @@ export class WaveAnimation {
 
       const intensity = v * 0.125 + 0.5
       intensities[i] = gated ? smoothstep(threshold, edge1, intensity) : intensity
+
+      if (tints) {
+        // Canvas-normalized territories stay large and mostly 0/1 so both
+        // hues read as distinct regions instead of a muddy mid-mix.
+        const u = grid.x[i] * invW
+        const vTint = grid.y[i] * invH
+        const tv = Math.sin(u * 8.2 + tintT) + Math.sin(vTint * 7.1 - tintT * 0.8)
+        tints[i] = smoothstep(-0.3, 0.3, tv)
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
-import react from "@astrojs/react"
 import { createRequire } from "node:module"
-import { defineConfig } from "astro/config"
+import react from "@astrojs/react"
 import tailwindcss from "@tailwindcss/vite"
+import { defineConfig } from "astro/config"
 
 const require = createRequire(import.meta.url)
 const tslibPath = require.resolve("tslib")
@@ -26,6 +26,7 @@ export default defineConfig({
     },
     optimizeDeps: {
       include: ["tslib", "react-remove-scroll", "use-sidecar"],
+      exclude: ["wavedance"],
     },
     ssr: {
       noExternal: ["radix-ui"],

@@ -34,6 +34,9 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
     dotSizeVariation: clampOpacity(config.dotSizeVariation, 0.3),
     gap,
     foreground: normalizeHexColor(config.foreground ?? "#7c7c7c"),
+    secondaryForegroundColor: config.secondaryForegroundColor
+      ? normalizeHexColor(config.secondaryForegroundColor)
+      : "",
     foregroundOpacity: clampOpacity(config.foregroundOpacity),
     background: normalizeHexColor(config.background ?? "#161616"),
     backgroundOpacity: clampOpacity(config.backgroundOpacity),
@@ -57,10 +60,22 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
       softness: config.plasma?.softness ?? 0.5,
       seed: config.plasma?.seed ?? 42,
     },
-    flow: {
-      scale: config.flow?.scale ?? 0.006,
-      speed: config.flow?.speed ?? 0.0004,
-      seed: config.flow?.seed ?? 42,
+    arc: {
+      speed: config.arc?.speed ?? 1,
+      center: config.arc?.center ?? 0.4,
+      drop: config.arc?.drop ?? 0.9,
+      thickness: config.arc?.thickness ?? 0.35,
+      curve: config.arc?.curve ?? 1.8,
+      falloff: config.arc?.falloff ?? 2.5,
+      breathe: config.arc?.breathe ?? 0.1,
+    },
+    ribbon: {
+      speed: config.ribbon?.speed ?? 1,
+      amplitude: config.ribbon?.amplitude ?? 0.2,
+      thickness: config.ribbon?.thickness ?? 1,
+      spread: config.ribbon?.spread ?? 1,
+      fade: clampOpacity(config.ribbon?.fade, 0.25),
+      bloom: clampOpacity(config.ribbon?.bloom, 0.5),
     },
     devicePixelRatio: config.devicePixelRatio ?? Math.min(autoDpr, maxDevicePixelRatio),
     maxDevicePixelRatio,

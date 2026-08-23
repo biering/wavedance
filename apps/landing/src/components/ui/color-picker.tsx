@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { COLOR_TONES, type ToneName, toneHex } from "@/lib/tone"
 import { cn } from "@/lib/utils"
 import Color from "color"
 import { useMemo, useState } from "react"
@@ -21,6 +22,13 @@ export interface ColorPickerProps {
   onChange: (value: string) => void
   className?: string
   disabled?: boolean
+}
+
+export interface ColorPresetsProps {
+  hue: number
+  selected: ToneName | null
+  onChange: (hex: string, name: ToneName) => void
+  label: string
 }
 
 export function ColorPicker({ value, onChange, className, disabled }: ColorPickerProps) {
@@ -61,5 +69,59 @@ export function ColorPicker({ value, onChange, className, disabled }: ColorPicke
         />
       </PopoverContent>
     </Popover>
+  )
+}
+
+export function ColorPresets({ hue, selected, onChange, label }: ColorPresetsProps) {
+  return (
+    <fieldset className="m-0 flex flex-wrap gap-1 border-0 p-0">
+      <legend className="sr-only">{label} presets</legend>
+      {COLOR_TONES.map((tone) => (
+        <Chip
+          key={tone.name}
+          label={tone.name}
+          swatch={toneHex(hue, tone.name)}
+          selected={selected === tone.name}
+          onClick={() => onChange(toneHex(hue, tone.name), tone.name)}
+        />
+      ))}
+    </fieldset>
+  )
+}
+
+function Chip({
+  label,
+  swatch,
+  selected,
+  onClick,
+}: {
+  label: string
+  swatch: string
+  selected: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={cn(
+        "border-line inline-flex items-center gap-1.5 rounded-full border py-1 pr-2.5 pl-1.5",
+        "text-[0.65rem] lowercase transition-colors duration-150",
+        selected ? "bg-line/70 text-ink" : "text-quiet hover:bg-line/30 hover:text-ink",
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className="size-3 rounded-full ring-1 ring-ink/15"
+        style={{ background: swatch }}
+      />
+      {selected && (
+        <span aria-hidden="true" className="text-[0.6rem] leading-none text-ink/70">
+          ✓
+        </span>
+      )}
+      {label}
+    </button>
   )
 }
