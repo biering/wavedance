@@ -1,8 +1,12 @@
 ---
-import { Demo } from "../components/Demo"
+import { Landing } from "../components/Landing"
 import Layout from "../layouts/Layout.astro"
 ---
 
-<Layout>
-  <Demo client:load />
+<Layout
+  title="wavedance"
+  description="High-performance animated dot-grid canvas background"
+  lock
+>
+  <Landing client:load />
 </Layout>

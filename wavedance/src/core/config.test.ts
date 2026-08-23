@@ -50,12 +50,40 @@ describe("resolveConfig wave gate", () => {
   })
 })
 
-describe("resolveConfig flow", () => {
-  it("provides flow defaults", () => {
-    const flow = resolveConfig({}).flow
-    expect(flow.scale).toBeGreaterThan(0)
-    expect(flow.speed).toBeGreaterThan(0)
-    expect(flow.seed).toBe(42)
+describe("resolveConfig arc", () => {
+  it("provides arc defaults", () => {
+    const arc = resolveConfig({}).arc
+    expect(arc.speed).toBe(1)
+    expect(arc.center).toBe(0.4)
+    expect(arc.drop).toBe(0.9)
+    expect(arc.thickness).toBe(0.35)
+    expect(arc.curve).toBe(1.8)
+    expect(arc.falloff).toBe(2.5)
+    expect(arc.breathe).toBe(0.1)
+  })
+})
+
+describe("resolveConfig ribbon", () => {
+  it("provides ribbon defaults", () => {
+    const ribbon = resolveConfig({}).ribbon
+    expect(ribbon.speed).toBe(1)
+    expect(ribbon.amplitude).toBe(0.2)
+    expect(ribbon.thickness).toBe(1)
+    expect(ribbon.spread).toBe(1)
+    expect(ribbon.fade).toBe(0.25)
+    expect(ribbon.bloom).toBe(0.5)
+  })
+})
+
+describe("resolveConfig secondaryForegroundColor", () => {
+  it("defaults to empty", () => {
+    expect(resolveConfig({}).secondaryForegroundColor).toBe("")
+  })
+
+  it("normalizes a second foreground tint", () => {
+    expect(resolveConfig({ secondaryForegroundColor: "#A855F7" }).secondaryForegroundColor).toBe(
+      "#a855f7",
+    )
   })
 })
 

@@ -1,4 +1,4 @@
-export type AnimationType = "random" | "wave" | "plasma" | "flow"
+export type AnimationType = "random" | "wave" | "plasma" | "arc" | "ribbon"
 
 export interface GapConfig {
   x: number
@@ -44,13 +44,36 @@ export interface PlasmaAnimationOptions {
   seed?: number
 }
 
-export interface FlowAnimationOptions {
-  /** Spatial scale of the flow field. Lower = broader currents. Default: 0.006 */
-  scale?: number
-  /** Animation speed multiplier. Default: 0.0004 */
+export interface ArcAnimationOptions {
+  /** Breathing speed. `1` matches the original ~1 cycle per second. Default: 1 */
   speed?: number
-  /** Noise seed for deterministic output. Default: 42 */
-  seed?: number
+  /** Vertical position of the band, as a fraction of height. Default: 0.4 */
+  center?: number
+  /** How far the band drops toward the edges, as a fraction of height. Default: 0.9 */
+  drop?: number
+  /** Band thickness as a fraction of height. Default: 0.35 */
+  thickness?: number
+  /** Arc curvature exponent. Higher = flatter middle, sharper drop. Default: 1.8 */
+  curve?: number
+  /** Horizontal edge-fade exponent. Default: 2.5 */
+  falloff?: number
+  /** Organic breathing amplitude. Default: 0.1 */
+  breathe?: number
+}
+
+export interface RibbonAnimationOptions {
+  /** Phase speed. `1` matches the original ~0.22 cycles per second. Default: 1 */
+  speed?: number
+  /** Vertical amplitude of the sine paths. Default: 0.2 */
+  amplitude?: number
+  /** Ribbon thickness multiplier. Default: 1 */
+  thickness?: number
+  /** Vertical spacing of the three bands. Default: 1 */
+  spread?: number
+  /** Left-to-right composition fade. `0` is even, `1` matches the original. Default: 0.25 */
+  fade?: number
+  /** Soft bloom orbs. Default: 0.5 */
+  bloom?: number
 }
 
 export interface WavedanceConfig {
@@ -67,6 +90,13 @@ export interface WavedanceConfig {
   gap?: number | GapConfig
   /** Dot color as hex string. Default: "#7c7c7c" */
   foreground?: string
+  /**
+   * Optional second tint. Wave paints slow color territories across the
+   * ripples; plasma mixes a second offset blob field; ribbon assigns it to
+   * bands; arc draws a second overlapping band. Empty is a single color.
+   * Default: `""`
+   */
+  secondaryForegroundColor?: string
   /** Dot opacity multiplier (0–1). Default: 1 */
   foregroundOpacity?: number
   /** Canvas background color as hex string. Default: "#161616" */
@@ -81,8 +111,10 @@ export interface WavedanceConfig {
   random?: RandomAnimationOptions
   /** Plasma animation options */
   plasma?: PlasmaAnimationOptions
-  /** Flow animation options */
-  flow?: FlowAnimationOptions
+  /** Arc / data-pixel horizon options */
+  arc?: ArcAnimationOptions
+  /** Ribbon-field options */
+  ribbon?: RibbonAnimationOptions
   /** Device pixel ratio override. Default: auto-detected, capped by `maxDevicePixelRatio`. */
   devicePixelRatio?: number
   /**
@@ -101,6 +133,7 @@ export interface ResolvedWavedanceConfig {
   dotSizeVariation: number
   gap: GapConfig
   foreground: string
+  secondaryForegroundColor: string
   foregroundOpacity: number
   background: string
   backgroundOpacity: number
@@ -108,7 +141,8 @@ export interface ResolvedWavedanceConfig {
   wave: Required<WaveAnimationOptions>
   random: Required<RandomAnimationOptions>
   plasma: Required<PlasmaAnimationOptions>
-  flow: Required<FlowAnimationOptions>
+  arc: Required<ArcAnimationOptions>
+  ribbon: Required<RibbonAnimationOptions>
   devicePixelRatio: number
   maxDevicePixelRatio: number
   maxDots: number
@@ -143,4 +177,8 @@ export interface DrawOptions {
   background: string
   backgroundOpacity: number
   dpr: number
+  /** Second fill mixed with `foreground` using `tints`. Empty disables mixing. */
+  foreground2?: string
+  /** Per-dot mix toward `foreground2` in [0, 1]. */
+  tints?: Float32Array
 }

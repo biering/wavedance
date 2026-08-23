@@ -4,21 +4,25 @@ import "../styles/global.css"
 interface Props {
   title?: string
   description?: string
+  lock?: boolean
 }
 
-const { title = "wavedance", description = "High-performance animated dot-grid canvas library" } =
-  Astro.props
+const {
+  title = "wavedance",
+  description = "High-performance animated dot-grid canvas library",
+  lock = false,
+} = Astro.props
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class:list={[{ "h-full overflow-hidden": lock }]}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
   </head>
-  <body>
+  <body class:list={[{ "h-full overflow-hidden": lock }]}>
     <slot />
   </body>
 </html>

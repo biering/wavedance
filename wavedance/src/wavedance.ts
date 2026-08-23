@@ -41,8 +41,11 @@ export function createWavedance(
     background: resolved.background,
     backgroundOpacity: resolved.backgroundOpacity,
     dpr: resolved.devicePixelRatio,
+    foreground2: "",
+    tints: undefined,
   }
   const syncDrawOptions = (): void => {
+    const dual = resolved.animation !== "random" && resolved.secondaryForegroundColor
     drawOptions.dotSize = resolved.dotSize
     drawOptions.dotSizeVariation = resolved.dotSizeVariation
     drawOptions.foreground = resolved.foreground
@@ -50,7 +53,10 @@ export function createWavedance(
     drawOptions.background = resolved.background
     drawOptions.backgroundOpacity = resolved.backgroundOpacity
     drawOptions.dpr = resolved.devicePixelRatio
+    drawOptions.foreground2 = dual ? resolved.secondaryForegroundColor : ""
+    drawOptions.tints = dual ? field.tintBuffer : undefined
   }
+  syncDrawOptions()
 
   let rafId = 0
   let running = false
@@ -99,8 +105,24 @@ export function createWavedance(
     renderer.draw(grid, intensities, drawOptions)
   }
 
+  const ensureLoop = (): void => {
+    if (!running || rafId) return
+    rafId = requestAnimationFrame(loop)
+  }
+
+  const onAnimationGateChange = (): void => {
+    if (!running) return
+    if (shouldAnimate()) {
+      ensureLoop()
+      return
+    }
+    idleDrawn = false
+    ensureLoop()
+  }
+
   const loop = (time: number): void => {
     if (!running) return
+    rafId = 0
 
     if (shouldAnimate()) {
       // Resuming from an idle stretch: reset the frame clock so the delta-based
@@ -108,14 +130,13 @@ export function createWavedance(
       if (idleDrawn) lastFrameTime = time
       drawFrame(time)
       idleDrawn = false
+      ensureLoop()
     } else if (grid && !idleDrawn) {
       // Not animating (hidden, off-screen, or reduced-motion): draw one static
-      // frame, then idle until state changes instead of redrawing every frame.
+      // frame, then sleep until visibility/intersection/motion changes.
       drawFrame(time)
       idleDrawn = true
     }
-
-    rafId = requestAnimationFrame(loop)
   }
 
   const start = (): void => {
@@ -142,6 +163,12 @@ export function createWavedance(
       rebuildGrid()
       if (grid) {
         drawFrame(performance.now())
+        if (shouldAnimate()) {
+          idleDrawn = false
+          ensureLoop()
+        } else {
+          idleDrawn = true
+        }
       }
     }, 100)
   }
@@ -158,6 +185,7 @@ export function createWavedance(
     intersectionObserver = new IntersectionObserver(
       (entries) => {
         inView = entries.some((entry) => entry.isIntersecting)
+        onAnimationGateChange()
       },
       { root: null, threshold: 0 },
     )
@@ -167,15 +195,14 @@ export function createWavedance(
   if (typeof window !== "undefined") {
     visibilityHandler = () => {
       visible = document.visibilityState === "visible"
+      onAnimationGateChange()
     }
     document.addEventListener("visibilitychange", visibilityHandler)
 
     if (typeof window.matchMedia === "function") {
       motionMediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
       motionChangeHandler = () => {
-        if (grid) {
-          drawFrame(performance.now())
-        }
+        onAnimationGateChange()
       }
       motionMediaQuery.addEventListener("change", motionChangeHandler)
     }
@@ -189,7 +216,8 @@ export function createWavedance(
         wave: partial.wave ? { ...resolved.wave, ...partial.wave } : resolved.wave,
         random: partial.random ? { ...resolved.random, ...partial.random } : resolved.random,
         plasma: partial.plasma ? { ...resolved.plasma, ...partial.plasma } : resolved.plasma,
-        flow: partial.flow ? { ...resolved.flow, ...partial.flow } : resolved.flow,
+        arc: partial.arc ? { ...resolved.arc, ...partial.arc } : resolved.arc,
+        ribbon: partial.ribbon ? { ...resolved.ribbon, ...partial.ribbon } : resolved.ribbon,
       }
       resolved = resolveConfig(merged)
       field.updateConfig(resolved)
@@ -206,6 +234,12 @@ export function createWavedance(
 
       if (grid) {
         drawFrame(performance.now())
+        if (shouldAnimate()) {
+          idleDrawn = false
+          ensureLoop()
+        } else {
+          idleDrawn = true
+        }
       }
     },
 
@@ -245,7 +279,8 @@ export function createWavedance(
         wave: { ...resolved.wave },
         random: { ...resolved.random },
         plasma: { ...resolved.plasma },
-        flow: { ...resolved.flow },
+        arc: { ...resolved.arc },
+        ribbon: { ...resolved.ribbon },
       }
     },
   }

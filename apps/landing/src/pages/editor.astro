@@ -1,0 +1,12 @@
+---
+import { Demo } from "../components/Demo"
+import Layout from "../layouts/Layout.astro"
+---
+
+<Layout
+  title="wavedance editor"
+  description="Tune a wavedance canvas — grid, color, and animation"
+  lock
+>
+  <Demo client:load />
+</Layout>

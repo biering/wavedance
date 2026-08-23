@@ -59,7 +59,7 @@ wavedance/src/
   wavedance.ts          # public entry: createWavedance()
   types.ts              # WavedanceConfig, WavedanceInstance, animation options, etc.
   core/                 # config resolution, grid, noise, field, color, rng
-  animations/           # wave, random, plasma
+  animations/           # wave, random, plasma, arc, ribbon
   render/               # renderer interface + Canvas2D renderer
 
 apps/landing/src/
