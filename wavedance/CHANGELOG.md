@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/biering/wavedance/compare/wavedance-v0.5.0...wavedance-v0.6.0) (2026-08-23)
+
+
+### Features
+
+* new animation styles and website ([#7](https://github.com/biering/wavedance/issues/7)) ([ca46a38](https://github.com/biering/wavedance/commit/ca46a38f331b2f3f090a63480213f845b7770b59))
+
 ## [0.5.0](https://github.com/biering/wavedance/compare/wavedance-v0.4.0...wavedance-v0.5.0) (2026-07-30)
 
 
