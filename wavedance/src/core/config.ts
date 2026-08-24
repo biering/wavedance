@@ -3,6 +3,7 @@ import { normalizeHexColor } from "./color"
 
 const DEFAULT_GAP = 8
 const DEFAULT_DOT_SIZE = 1
+const DEFAULT_MAX_FPS = 60
 
 export function clampOpacity(value: number | undefined, fallback = 1): number {
   if (value === undefined) {
@@ -80,6 +81,7 @@ export function resolveConfig(config: WavedanceConfig = {}): ResolvedWavedanceCo
     devicePixelRatio: config.devicePixelRatio ?? Math.min(autoDpr, maxDevicePixelRatio),
     maxDevicePixelRatio,
     maxDots: config.maxDots ?? 100_000,
+    maxFps: Math.max(0, config.maxFps ?? DEFAULT_MAX_FPS),
     respectReducedMotion: config.respectReducedMotion ?? true,
   }
 }

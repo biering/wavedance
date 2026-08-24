@@ -65,6 +65,10 @@ export function createWavedance(
   let inView = true
   let startTime = performance.now()
   let lastFrameTime = startTime
+  // Clock of the last *drawn* frame, for the maxFps throttle. Distinct from
+  // `lastFrameTime`: skipped frames must keep accumulating delta for the
+  // delta-integrating animations. -Infinity guarantees the first frame draws.
+  let lastDrawTime = Number.NEGATIVE_INFINITY
   let resizeObserver: ResizeObserver | null = null
   let intersectionObserver: IntersectionObserver | null = null
   let motionMediaQuery: MediaQueryList | null = null
@@ -72,8 +76,14 @@ export function createWavedance(
   let visibilityHandler: (() => void) | null = null
   let resizeTimer = 0
 
+  // With the active animation's speed at exactly 0 the computed field is
+  // time-invariant, so repainting is pure waste. Strict equality: negative
+  // speeds animate backwards and must not park.
+  const isStatic = (): boolean => resolved[resolved.animation].speed === 0
+
   const shouldAnimate = (): boolean => {
     if (resolved.respectReducedMotion && prefersReducedMotion()) return false
+    if (isStatic()) return false
     return visible && inView
   }
 
@@ -128,8 +138,16 @@ export function createWavedance(
       // Resuming from an idle stretch: reset the frame clock so the delta-based
       // animations don't jump on the first frame back.
       if (idleDrawn) lastFrameTime = time
-      drawFrame(time)
-      idleDrawn = false
+      const interval = resolved.maxFps > 0 ? 1000 / resolved.maxFps : 0
+      const elapsed = time - lastDrawTime
+      if (interval === 0 || elapsed >= interval) {
+        drawFrame(time)
+        // Keep the fractional remainder so average fps ≈ maxFps; after a long
+        // gap (or the -Infinity first frame) snap to `time` — the remainder
+        // would be NaN or overcorrect.
+        lastDrawTime = elapsed < interval * 2 ? time - (elapsed % interval) : time
+        idleDrawn = false
+      }
       ensureLoop()
     } else if (grid && !idleDrawn) {
       // Not animating (hidden, off-screen, or reduced-motion): draw one static
@@ -144,6 +162,7 @@ export function createWavedance(
     running = true
     startTime = performance.now()
     lastFrameTime = startTime
+    lastDrawTime = Number.NEGATIVE_INFINITY
     rafId = requestAnimationFrame(loop)
   }
 
@@ -162,7 +181,9 @@ export function createWavedance(
     resizeTimer = window.setTimeout(() => {
       rebuildGrid()
       if (grid) {
-        drawFrame(performance.now())
+        const now = performance.now()
+        drawFrame(now)
+        lastDrawTime = now
         if (shouldAnimate()) {
           idleDrawn = false
           ensureLoop()
@@ -233,7 +254,12 @@ export function createWavedance(
       }
 
       if (grid) {
-        drawFrame(performance.now())
+        const now = performance.now()
+        // Pin the frame clock when resuming from a park, or the delta-based
+        // animations would integrate the whole parked stretch in one frame.
+        if (idleDrawn) lastFrameTime = now
+        drawFrame(now)
+        lastDrawTime = now
         if (shouldAnimate()) {
           idleDrawn = false
           ensureLoop()

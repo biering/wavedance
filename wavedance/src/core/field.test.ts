@@ -93,3 +93,42 @@ describe("FieldComputer", () => {
     expect(second).toBe(first)
   })
 })
+
+describe("FieldComputer static speed", () => {
+  const grid = buildGrid({
+    width: 300,
+    height: 200,
+    dotSize: 2,
+    gap: { x: 12, y: 12 },
+    dpr: 1,
+    maxDots: 10_000,
+  })
+
+  for (const animation of ["wave", "plasma", "arc", "ribbon"] as const) {
+    it(`${animation} is time-invariant when speed is 0`, () => {
+      const config = resolveConfig({ animation, [animation]: { speed: 0 } })
+      const field = new FieldComputer(config.maxDots, config)
+      const early = Float32Array.from(field.compute(grid, 0, 16))
+      const late = field.compute(grid, 5_000, 16)
+
+      for (let i = 0; i < grid.count; i++) {
+        expect(late[i]).toBe(early[i])
+      }
+    })
+  }
+
+  it("random is invariant after its first frame when speed is 0", () => {
+    const config = resolveConfig({ animation: "random", random: { speed: 0, seed: 11 } })
+    const field = new FieldComputer(config.maxDots, config)
+    const first = Float32Array.from(field.compute(grid, 0, 16))
+
+    field.compute(grid, 5_000, 16)
+    const later = field.compute(grid, 10_000, 5_000)
+
+    for (let i = 0; i < grid.count; i++) {
+      expect(later[i]).toBe(first[i])
+      expect(later[i]).toBeGreaterThanOrEqual(config.random.minOpacity)
+      expect(later[i]).toBeLessThanOrEqual(config.random.maxOpacity)
+    }
+  })
+})
