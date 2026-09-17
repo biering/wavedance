@@ -119,6 +119,130 @@ describe("createWavedance", () => {
     )
   })
 
+  /** Fake-rAF harness: transparent background keeps clearRect as the per-draw signal. */
+  function frameHarness() {
+    const clearRect = vi.fn()
+    const ctx = {
+      fillStyle: "",
+      globalAlpha: 1,
+      fillRect: vi.fn(),
+      clearRect,
+    } as unknown as CanvasRenderingContext2D
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(ctx)
+
+    const scheduled: FrameRequestCallback[] = []
+    const requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => {
+      scheduled.push(cb)
+      return scheduled.length
+    })
+    vi.stubGlobal("requestAnimationFrame", requestAnimationFrame)
+    vi.stubGlobal("cancelAnimationFrame", vi.fn())
+
+    const drive = (frames: number, stepMs = 16) => {
+      for (let i = 0; i < frames; i++) {
+        const next = scheduled[scheduled.length - 1]
+        if (next) next((i + 1) * stepMs)
+      }
+    }
+    return { clearRect, requestAnimationFrame, drive }
+  }
+
+  it("caps drawn frames at maxFps while keeping the loop alive", () => {
+    const { clearRect, requestAnimationFrame, drive } = frameHarness()
+    const instance = createWavedance(container, {
+      animation: "wave",
+      maxFps: 30,
+      backgroundOpacity: 0,
+    })
+    drive(21) // 21 frames at 16ms spacing ≈ 62.5fps for 336ms
+
+    // ~30fps over ~336ms ≈ 10-11 draws (tolerant band — drift correction
+    // makes exact counts brittle), strictly fewer than one per rAF frame.
+    const draws = clearRect.mock.calls.length
+    expect(draws).toBeGreaterThanOrEqual(8)
+    expect(draws).toBeLessThanOrEqual(12)
+    // The rAF chain never stops: one schedule at start + one per driven frame.
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(22)
+    instance.destroy()
+  })
+
+  it("maxFps 0 draws on every animation frame", () => {
+    const { clearRect, drive } = frameHarness()
+    const instance = createWavedance(container, {
+      animation: "wave",
+      maxFps: 0,
+      backgroundOpacity: 0,
+    })
+    drive(5)
+    expect(clearRect).toHaveBeenCalledTimes(5)
+    instance.destroy()
+  })
+
+  it("draws once and stops scheduling when the active speed is 0", () => {
+    const { clearRect, requestAnimationFrame, drive } = frameHarness()
+    const instance = createWavedance(container, {
+      animation: "wave",
+      wave: { speed: 0 },
+      maxFps: 0,
+      backgroundOpacity: 0,
+    })
+    drive(5)
+
+    expect(clearRect).toHaveBeenCalledTimes(1)
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(1)
+    instance.destroy()
+  })
+
+  it("resumes from a static park when update raises the speed", () => {
+    const { clearRect, drive } = frameHarness()
+    const instance = createWavedance(container, {
+      animation: "wave",
+      wave: { speed: 0 },
+      maxFps: 0,
+      backgroundOpacity: 0,
+    })
+    drive(2)
+    expect(clearRect).toHaveBeenCalledTimes(1)
+
+    instance.update({ wave: { speed: 0.001 } })
+    // update() draws immediately…
+    expect(clearRect).toHaveBeenCalledTimes(2)
+    // …and the loop keeps drawing again.
+    drive(3)
+    expect(clearRect).toHaveBeenCalledTimes(5)
+    instance.destroy()
+  })
+
+  it("static random draws its seeded first frame once, then parks", () => {
+    const { clearRect, requestAnimationFrame, drive } = frameHarness()
+    const instance = createWavedance(container, {
+      animation: "random",
+      random: { speed: 0, seed: 11 },
+      maxFps: 0,
+      backgroundOpacity: 0,
+    })
+    drive(5)
+
+    expect(clearRect).toHaveBeenCalledTimes(1)
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(1)
+    instance.destroy()
+  })
+
+  it("update draws immediately even inside a throttle window", () => {
+    const { clearRect, drive } = frameHarness()
+    const instance = createWavedance(container, {
+      animation: "wave",
+      maxFps: 30,
+      backgroundOpacity: 0,
+    })
+    drive(1)
+    expect(clearRect).toHaveBeenCalledTimes(1)
+
+    instance.update({ foreground: "#ffffff" })
+    expect(clearRect).toHaveBeenCalledTimes(2)
+    instance.destroy()
+  })
+
   it("draws once and then idles when prefers-reduced-motion is set", () => {
     const clearRect = vi.fn()
     const ctx = {

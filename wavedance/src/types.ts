@@ -124,6 +124,13 @@ export interface WavedanceConfig {
   maxDevicePixelRatio?: number
   /** Safety cap on dot count. Default: 100000 */
   maxDots?: number
+  /**
+   * Upper bound on drawn frames per second. Excess animation frames are
+   * skipped (the rAF loop stays alive) so average fps ≈ `maxFps`, and the
+   * skipped time folds into the next frame's delta. `0` disables the cap and
+   * draws on every animation frame. Default: 60
+   */
+  maxFps?: number
   /** Pause animation when prefers-reduced-motion is set. Default: true */
   respectReducedMotion?: boolean
 }
@@ -146,6 +153,7 @@ export interface ResolvedWavedanceConfig {
   devicePixelRatio: number
   maxDevicePixelRatio: number
   maxDots: number
+  maxFps: number
   respectReducedMotion: boolean
 }
 

@@ -107,3 +107,21 @@ describe("resolveConfig devicePixelRatio", () => {
     expect(resolveConfig({ devicePixelRatio: 3, maxDevicePixelRatio: 2 }).devicePixelRatio).toBe(3)
   })
 })
+
+describe("resolveConfig maxFps", () => {
+  it("defaults maxFps to 60", () => {
+    expect(resolveConfig({}).maxFps).toBe(60)
+  })
+
+  it("accepts an explicit cap", () => {
+    expect(resolveConfig({ maxFps: 30 }).maxFps).toBe(30)
+  })
+
+  it("treats 0 as uncapped", () => {
+    expect(resolveConfig({ maxFps: 0 }).maxFps).toBe(0)
+  })
+
+  it("clamps negative values to 0", () => {
+    expect(resolveConfig({ maxFps: -5 }).maxFps).toBe(0)
+  })
+})
